@@ -15,7 +15,7 @@
 * Copyright (c) 2011 - 2012 De Bortoli Wines Pty Limited (Australia). All Rights Reserved.
 */
 
-package org.pentaho.reporting.engine.classic.extensions.datasources.openerp;
+package org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth;
 
 import com.debortoliwines.openerp.api.Field.FieldType;
 import com.debortoliwines.openerp.reporting.di.OpenERPConfiguration;
@@ -40,14 +40,14 @@ import java.util.HashMap;
 /**
  * @author Pieter van der Merwe
  */
-public class OpenERPDataFactory extends AbstractDataFactory {
+public class FileFixedWidthDataFactory extends AbstractDataFactory {
   private static final long serialVersionUID = -6235833289788633577L;
-  private static final Log logger = LogFactory.getLog( OpenERPDataFactory.class );
+  private static final Log logger = LogFactory.getLog( FileFixedWidthDataFactory.class );
 
   private OpenERPConfiguration config;
   private String queryName;
 
-  public OpenERPDataFactory() {
+  public FileFixedWidthDataFactory() {
   }
 
   /**
@@ -263,8 +263,8 @@ public class OpenERPDataFactory extends AbstractDataFactory {
   public void close() {
   }
 
-  public OpenERPDataFactory clone() {
-    final OpenERPDataFactory dataFactory = (OpenERPDataFactory) super.clone();
+  public FileFixedWidthDataFactory clone() {
+    final FileFixedWidthDataFactory dataFactory = (FileFixedWidthDataFactory) super.clone();
     if ( this.config != null ) {
       dataFactory.config = this.config.clone();
     }

@@ -16,7 +16,7 @@
 * Copyright (c) 2011 - 2012 De Bortoli Wines Pty Limited (Australia). All Rights Reserved.
 */
 
-package org.pentaho.reporting.engine.classic.extensions.datasources.openerp.writer;
+package org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.writer;
 
 /*
  * This program is free software; you can redistribute it and/or modify it under the
@@ -40,8 +40,9 @@ import org.pentaho.reporting.engine.classic.core.DataFactory;
 import org.pentaho.reporting.engine.classic.core.modules.parser.bundle.writer.BundleDataFactoryWriterHandler;
 import org.pentaho.reporting.engine.classic.core.modules.parser.bundle.writer.BundleWriterException;
 import org.pentaho.reporting.engine.classic.core.modules.parser.bundle.writer.BundleWriterState;
-import org.pentaho.reporting.engine.classic.extensions.datasources.openerp.OpenERPDataFactory;
-import org.pentaho.reporting.engine.classic.extensions.datasources.openerp.OpenERPModule;
+import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.FileFixedWidthDataFactory;
+import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.FileFixedWidthModule;
+import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.writer.FileFixedWidthDataFactoryHelper;
 import org.pentaho.reporting.libraries.docbundle.BundleUtilities;
 import org.pentaho.reporting.libraries.docbundle.WriteableDocumentBundle;
 import org.pentaho.reporting.libraries.xmlns.writer.DefaultTagDescription;
@@ -56,8 +57,8 @@ import java.io.OutputStreamWriter;
  *
  * @author Thomas Morgner, Pieter van der Merwe
  */
-public class OpenERPDataFactoryBundleWriteHandler implements BundleDataFactoryWriterHandler {
-  public OpenERPDataFactoryBundleWriteHandler() {
+public class FileFixedWidthDataFactoryBundleWriteHandler implements BundleDataFactoryWriterHandler {
+  public FileFixedWidthDataFactoryBundleWriteHandler() {
   }
 
   /**
@@ -77,21 +78,21 @@ public class OpenERPDataFactoryBundleWriteHandler implements BundleDataFactoryWr
                                   final BundleWriterState state )
     throws IOException, BundleWriterException {
     final String fileName =
-      BundleUtilities.getUniqueName( bundle, state.getFileName(), "datasources/openerp-ds{0}.xml" );
+      BundleUtilities.getUniqueName( bundle, state.getFileName(), "datasources/file-fixed-width-ds{0}.xml" );
     if ( fileName == null ) {
       throw new IOException( "Unable to generate unique name for Inline-Data-Source" );
     }
 
     final OutputStream outputStream = bundle.createEntry( fileName, "text/xml" );
     final DefaultTagDescription tagDescription = new DefaultTagDescription();
-    tagDescription.setNamespaceHasCData( OpenERPModule.NAMESPACE, false );
+    tagDescription.setNamespaceHasCData( FileFixedWidthModule.NAMESPACE, false );
 
     final XmlWriter xmlWriter = new XmlWriter
       ( new OutputStreamWriter( outputStream, "UTF-8" ), tagDescription, "  ", "\n" );
 
-    final OpenERPDataFactory dataFactory = (OpenERPDataFactory) rawDataFactory;
+    final FileFixedWidthDataFactory dataFactory = (FileFixedWidthDataFactory) rawDataFactory;
 
-    OpenERPDataFactoryHelper.writeXML( dataFactory, xmlWriter );
+    FileFixedWidthDataFactoryHelper.writeXML( dataFactory, xmlWriter );
 
     return fileName;
 

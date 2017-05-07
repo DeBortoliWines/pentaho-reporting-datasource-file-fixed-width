@@ -16,13 +16,14 @@
 * Copyright (c) 2011 - 2012 De Bortoli Wines Pty Limited (Australia). All Rights Reserved.
 */
 
-package org.pentaho.reporting.engine.classic.extensions.datasources.openerp.writer;
+package org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.writer;
 
 import org.pentaho.reporting.engine.classic.core.DataFactory;
 import org.pentaho.reporting.engine.classic.core.modules.parser.extwriter.DataFactoryWriteHandler;
 import org.pentaho.reporting.engine.classic.core.modules.parser.extwriter.ReportWriterContext;
 import org.pentaho.reporting.engine.classic.core.modules.parser.extwriter.ReportWriterException;
-import org.pentaho.reporting.engine.classic.extensions.datasources.openerp.OpenERPDataFactory;
+import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.FileFixedWidthDataFactory;
+import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.writer.FileFixedWidthDataFactoryHelper;
 import org.pentaho.reporting.libraries.xmlns.writer.XmlWriter;
 
 import java.io.IOException;
@@ -30,8 +31,8 @@ import java.io.IOException;
 /**
  * @author Pieter van der Merwe
  */
-public class OpenERPDataFactoryWriteHandler implements DataFactoryWriteHandler {
-  public OpenERPDataFactoryWriteHandler() {
+public class FileFixedWidthDataFactoryWriteHandler implements DataFactoryWriteHandler {
+  public FileFixedWidthDataFactoryWriteHandler() {
   }
 
   /**
@@ -47,9 +48,9 @@ public class OpenERPDataFactoryWriteHandler implements DataFactoryWriteHandler {
                      final XmlWriter xmlWriter,
                      final DataFactory rawDataFactory )
     throws IOException, ReportWriterException {
-    final OpenERPDataFactory dataFactory = (OpenERPDataFactory) rawDataFactory;
+    final FileFixedWidthDataFactory dataFactory = (FileFixedWidthDataFactory) rawDataFactory;
 
-    OpenERPDataFactoryHelper.writeXML( dataFactory, xmlWriter );
+    FileFixedWidthDataFactoryHelper.writeXML( dataFactory, xmlWriter );
 
   }
 }

@@ -15,7 +15,7 @@
 * Copyright (c) 2011 - 2012 De Bortoli Wines Pty Limited (Australia). All Rights Reserved.
 */
 
-package org.pentaho.reporting.engine.classic.extensions.datasources.openerp.parser;
+package org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.parser;
 
 /*
  * This program is free software; you can redistribute it and/or modify it under the
@@ -37,6 +37,8 @@ package org.pentaho.reporting.engine.classic.extensions.datasources.openerp.pars
 
 import com.debortoliwines.openerp.api.Field.FieldType;
 import com.debortoliwines.openerp.reporting.di.OpenERPFieldInfo;
+
+import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.parser.SelectedFieldReadHandler;
 import org.pentaho.reporting.libraries.xmlns.parser.AbstractXmlReadHandler;
 import org.pentaho.reporting.libraries.xmlns.parser.XmlReadHandler;
 import org.xml.sax.Attributes;

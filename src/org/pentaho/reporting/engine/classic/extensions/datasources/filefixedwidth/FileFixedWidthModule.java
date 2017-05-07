@@ -15,7 +15,7 @@
 * Copyright (c) 2011 - 2012 De Bortoli Wines Pty Limited (Australia). All Rights Reserved.
 */
 
-package org.pentaho.reporting.engine.classic.extensions.datasources.openerp;
+package org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth;
 
 /*
  * This program is free software; you can redistribute it and/or modify it under the
@@ -37,8 +37,8 @@ package org.pentaho.reporting.engine.classic.extensions.datasources.openerp;
 import org.pentaho.reporting.engine.classic.core.metadata.ElementMetaDataParser;
 import org.pentaho.reporting.engine.classic.core.modules.parser.base.DataFactoryReadHandlerFactory;
 import org.pentaho.reporting.engine.classic.core.modules.parser.base.DataFactoryXmlResourceFactory;
-import org.pentaho.reporting.engine.classic.extensions.datasources.openerp.parser.OpenERPDataSourceReadHandler;
-import org.pentaho.reporting.engine.classic.extensions.datasources.openerp.parser.OpenERPDataSourceXmlFactoryModule;
+import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.parser.FileFixedWidthDataSourceReadHandler;
+import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.parser.FileFixedWidthDataSourceXmlFactoryModule;
 import org.pentaho.reporting.libraries.base.boot.AbstractModule;
 import org.pentaho.reporting.libraries.base.boot.ModuleInitializeException;
 import org.pentaho.reporting.libraries.base.boot.SubSystem;
@@ -46,21 +46,21 @@ import org.pentaho.reporting.libraries.base.boot.SubSystem;
 /**
  * @author Pieter van der Merwe
  */
-public class OpenERPModule extends AbstractModule {
-  public static final String NAMESPACE = "http://jfreereport.sourceforge.net/namespaces/datasources/openerp";
+public class FileFixedWidthModule extends AbstractModule {
+  public static final String NAMESPACE = "http://jfreereport.sourceforge.net/namespaces/datasources/filefiledwidth";
 
-  public OpenERPModule() throws ModuleInitializeException {
+  public FileFixedWidthModule() throws ModuleInitializeException {
     loadModuleInfo();
   }
 
   public void initialize( final SubSystem subSystem ) throws ModuleInitializeException {
-    DataFactoryXmlResourceFactory.register( OpenERPDataSourceXmlFactoryModule.class );
+    DataFactoryXmlResourceFactory.register( FileFixedWidthDataSourceXmlFactoryModule.class );
 
     DataFactoryReadHandlerFactory.getInstance()
-      .setElementHandler( NAMESPACE, "openerp-datasource", OpenERPDataSourceReadHandler.class );
+      .setElementHandler( NAMESPACE, "file-fixed-width-datasource", FileFixedWidthDataSourceReadHandler.class );
 
     ElementMetaDataParser.initializeOptionalDataFactoryMetaData
-      ( "org/pentaho/reporting/engine/classic/extensions/datasources/openerp/meta-datafactory.xml" );
+      ( "org/pentaho/reporting/engine/classic/extensions/datasources/filefixedwidth/meta-datafactory.xml" );
 
   }
 }

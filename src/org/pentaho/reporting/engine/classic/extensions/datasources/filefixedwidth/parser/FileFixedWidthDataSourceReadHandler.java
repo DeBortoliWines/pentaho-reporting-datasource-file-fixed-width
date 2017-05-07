@@ -16,7 +16,7 @@
 * Copyright (c) 2011 - 2012 De Bortoli Wines Pty Limited (Australia). All Rights Reserved.
 */
 
-package org.pentaho.reporting.engine.classic.extensions.datasources.openerp.parser;
+package org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.parser;
 
 /*
  * This program is free software; you can redistribute it and/or modify it under the
@@ -41,7 +41,10 @@ import com.debortoliwines.openerp.reporting.di.OpenERPFieldInfo;
 import com.debortoliwines.openerp.reporting.di.OpenERPFilterInfo;
 import org.pentaho.reporting.engine.classic.core.DataFactory;
 import org.pentaho.reporting.engine.classic.core.modules.parser.base.DataFactoryReadHandler;
-import org.pentaho.reporting.engine.classic.extensions.datasources.openerp.OpenERPDataFactory;
+import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.FileFixedWidthDataFactory;
+import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.parser.ConfigReadHandler;
+import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.parser.FilterReadHandler;
+import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.parser.SelectedFieldReadHandler;
 import org.pentaho.reporting.libraries.xmlns.parser.AbstractXmlReadHandler;
 import org.pentaho.reporting.libraries.xmlns.parser.ParseException;
 import org.pentaho.reporting.libraries.xmlns.parser.XmlReadHandler;
@@ -53,15 +56,15 @@ import java.util.ArrayList;
 /**
  * @author Pieter van der Merwe
  */
-public class OpenERPDataSourceReadHandler extends AbstractXmlReadHandler implements DataFactoryReadHandler {
+public class FileFixedWidthDataSourceReadHandler extends AbstractXmlReadHandler implements DataFactoryReadHandler {
   private ConfigReadHandler configReadHandler;
   private ArrayList<FilterReadHandler> filters = new ArrayList<FilterReadHandler>();
-  private OpenERPDataFactory dataFactory;
+  private FileFixedWidthDataFactory dataFactory;
 
   private ArrayList<SelectedFieldReadHandler> selectedFieldHandlers = new ArrayList<SelectedFieldReadHandler>();
   private ArrayList<OpenERPFieldInfo> allFields = new ArrayList<OpenERPFieldInfo>();
 
-  public OpenERPDataSourceReadHandler() {
+  public FileFixedWidthDataSourceReadHandler() {
   }
 
   /**
@@ -106,7 +109,7 @@ public class OpenERPDataSourceReadHandler extends AbstractXmlReadHandler impleme
    * @throws SAXException if there is a parsing error.
    */
   protected void doneParsing() throws SAXException {
-    final OpenERPDataFactory srdf = new OpenERPDataFactory();
+    final FileFixedWidthDataFactory srdf = new FileFixedWidthDataFactory();
     if ( configReadHandler == null ) {
       throw new ParseException( "Required element 'config' is missing.", getLocator() );
     }

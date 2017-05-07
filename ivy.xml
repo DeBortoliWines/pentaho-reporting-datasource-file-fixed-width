@@ -29,9 +29,6 @@
     <dependency org="com.debortoliwines.openerp" name="openerp-java-api" rev="1.1.0"  conf="default_external->default"/>
     <dependency org="openerp" name="openerp-java-report-helper" rev="0.10.0"  conf="default_external->default"/>
 
-    <!-- reporting engine dependencies -->
-    <dependency org="${ivy.artifact.group}" name="pentaho-reporting-engine-classic-extensions-openerp"
-                rev="${project.revision}" transitive="true" changing="true"/>
     <!-- Testing Dependencies -->
     <dependency org="junit" name="junit" rev="4.10" transitive="false" conf="test->default"/>
     <dependency org="org.hsqldb" name="hsqldb" rev="2.3.2" transitive="false" conf="test->default"/>

@@ -9,5 +9,5 @@ latest Changes.
 
 This extension module provides the following additional functionality:
 
- * A datasource-editor-openerp-plugin for the external datasource.
+ * A datasource-file-fixed-width for the external datasource.
  

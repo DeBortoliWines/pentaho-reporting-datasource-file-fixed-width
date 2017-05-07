@@ -15,7 +15,7 @@
 * Copyright (c) 2011 - 2012 De Bortoli Wines Pty Limited (Australia). All Rights Reserved.
 */
 
-package org.pentaho.reporting.ui.datasources.openerp;
+package org.pentaho.reporting.ui.datasources.filefixedwidth;
 
 /*
  * This program is free software; you can redistribute it and/or modify it under the
@@ -43,7 +43,7 @@ import org.pentaho.reporting.engine.classic.core.designtime.DesignTimeContext;
 import org.pentaho.reporting.engine.classic.core.designtime.datafactory.DataFactoryEditorSupport;
 import org.pentaho.reporting.engine.classic.core.modules.gui.commonswing.ExceptionDialog;
 import org.pentaho.reporting.engine.classic.core.util.ReportParameterValues;
-import org.pentaho.reporting.engine.classic.extensions.datasources.openerp.OpenERPDataFactory;
+import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.FileFixedWidthDataFactory;
 import org.pentaho.reporting.libraries.designtime.swing.CommonDialog;
 import org.pentaho.reporting.libraries.designtime.swing.background.CancelEvent;
 import org.pentaho.reporting.libraries.designtime.swing.background.DataPreviewDialog;
@@ -59,7 +59,7 @@ import java.util.ArrayList;
 /**
  * @author Pieter van der Merwe
  */
-public class OpenERPDataSourceEditor extends CommonDialog {
+public class FileFixedWidthDataSourceEditor extends CommonDialog {
   private static final long serialVersionUID = 6685784298385723490L;
 
   private DesignTimeContext context;
@@ -67,17 +67,17 @@ public class OpenERPDataSourceEditor extends CommonDialog {
 
   private JTextField txtQueryName;
 
-  public OpenERPDataSourceEditor( final DesignTimeContext context ) {
+  public FileFixedWidthDataSourceEditor( final DesignTimeContext context ) {
     init( context );
   }
 
-  public OpenERPDataSourceEditor( final DesignTimeContext context, final Frame owner )
+  public FileFixedWidthDataSourceEditor( final DesignTimeContext context, final Frame owner )
     throws HeadlessException {
     super( owner );
     init( context );
   }
 
-  public OpenERPDataSourceEditor( final DesignTimeContext context, final Dialog owner )
+  public FileFixedWidthDataSourceEditor( final DesignTimeContext context, final Dialog owner )
     throws HeadlessException {
     super( owner );
     init( context );
@@ -96,13 +96,13 @@ public class OpenERPDataSourceEditor extends CommonDialog {
   protected Component createContentPane() {
     mainPanel = new OpenERPPanel();
     URL location =
-      OpenERPDataSourceEditor.class.getResource( "/org/pentaho/reporting/ui/datasources/openerp/resources/Add.png" );
+      FileFixedWidthDataSourceEditor.class.getResource( "/org/pentaho/reporting/ui/datasources/filefixedwidth/resources/Add.png" );
     if ( location != null ) {
       mainPanel.setFilterAddButtonIcon( new ImageIcon( location ) );
     }
 
     location =
-      OpenERPDataSourceEditor.class.getResource( "/org/pentaho/reporting/ui/datasources/openerp/resources/Remove.png" );
+      FileFixedWidthDataSourceEditor.class.getResource( "/org/pentaho/reporting/ui/datasources/filefixedwidth/resources/Remove.png" );
     if ( location != null ) {
       mainPanel.setFilterRemoveButtonIcon( new ImageIcon( location ) );
     }
@@ -146,7 +146,7 @@ public class OpenERPDataSourceEditor extends CommonDialog {
     return true;
   }
 
-  public DataFactory performConfiguration( final OpenERPDataFactory input ) {
+  public DataFactory performConfiguration( final FileFixedWidthDataFactory input ) {
     if ( input != null ) {
       txtQueryName.setText( input.getQueryName() );
       mainPanel.setConfiguration( input.getConfig() );
@@ -159,9 +159,9 @@ public class OpenERPDataSourceEditor extends CommonDialog {
     return produceDataFactory();
   }
 
-  private OpenERPDataFactory produceDataFactory() {
+  private FileFixedWidthDataFactory produceDataFactory() {
 
-    final OpenERPDataFactory dataFactory = new OpenERPDataFactory();
+    final FileFixedWidthDataFactory dataFactory = new FileFixedWidthDataFactory();
     final OpenERPConfiguration config = mainPanel.getConfiguration();
     dataFactory.setQueryName( txtQueryName.getText() );
     dataFactory.setConfig( config );
@@ -177,34 +177,34 @@ public class OpenERPDataSourceEditor extends CommonDialog {
 
     public void actionPerformed( final ActionEvent aEvt ) {
       try {
-        final OpenERPDataFactory dataFactory = produceDataFactory();
+        final FileFixedWidthDataFactory dataFactory = produceDataFactory();
         DataFactoryEditorSupport.configureDataFactoryForPreview( dataFactory, context );
 
-        final DataPreviewDialog previewDialog = new DataPreviewDialog( OpenERPDataSourceEditor.this );
+        final DataPreviewDialog previewDialog = new DataPreviewDialog( FileFixedWidthDataSourceEditor.this );
 
-        final OpenERPPreviewWorker worker = new OpenERPPreviewWorker( dataFactory, txtQueryName.getText() );
+        final FileFixedWidthPreviewWorker worker = new FileFixedWidthPreviewWorker( dataFactory, txtQueryName.getText() );
         previewDialog.showData( worker );
 
         final ReportDataFactoryException factoryException = worker.getException();
         if ( factoryException != null ) {
-          ExceptionDialog.showExceptionDialog( OpenERPDataSourceEditor.this, "Error",
+          ExceptionDialog.showExceptionDialog( FileFixedWidthDataSourceEditor.this, "Error",
             "An Error Occured during preview", factoryException );
         }
       } catch ( Exception e ) {
-        ExceptionDialog.showExceptionDialog( OpenERPDataSourceEditor.this, "Error",
+        ExceptionDialog.showExceptionDialog( FileFixedWidthDataSourceEditor.this, "Error",
           "An Error Occured during preview", e );
       }
     }
   }
 
 
-  private static class OpenERPPreviewWorker implements PreviewWorker {
-    private OpenERPDataFactory dataFactory;
+  private static class FileFixedWidthPreviewWorker implements PreviewWorker {
+    private FileFixedWidthDataFactory dataFactory;
     private TableModel resultTableModel;
     private ReportDataFactoryException exception;
     private String query;
 
-    private OpenERPPreviewWorker( final OpenERPDataFactory dataFactory, final String query ) {
+    private FileFixedWidthPreviewWorker( final FileFixedWidthDataFactory dataFactory, final String query ) {
       if ( dataFactory == null ) {
         throw new NullPointerException();
       }

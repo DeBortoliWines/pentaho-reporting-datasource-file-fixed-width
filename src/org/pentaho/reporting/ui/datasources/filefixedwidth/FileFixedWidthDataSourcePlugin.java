@@ -15,7 +15,7 @@
 * Copyright (c) 2011-2012 De Bortoli Wines Pty Limited (Australia). All Rights Reserved.
 */
 
-package org.pentaho.reporting.ui.datasources.openerp;
+package org.pentaho.reporting.ui.datasources.filefixedwidth;
 
 /*
  * This program is free software; you can redistribute it and/or modify it under the
@@ -40,7 +40,7 @@ import org.pentaho.reporting.engine.classic.core.designtime.DataSourcePlugin;
 import org.pentaho.reporting.engine.classic.core.designtime.DesignTimeContext;
 import org.pentaho.reporting.engine.classic.core.metadata.DataFactoryMetaData;
 import org.pentaho.reporting.engine.classic.core.metadata.DataFactoryRegistry;
-import org.pentaho.reporting.engine.classic.extensions.datasources.openerp.OpenERPDataFactory;
+import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.FileFixedWidthDataFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -48,31 +48,31 @@ import java.awt.*;
 /**
  * @author Pieter van der Merwe
  */
-public class OpenERPDataSourcePlugin implements DataSourcePlugin {
-  public OpenERPDataSourcePlugin() {
+public class FileFixedWidthDataSourcePlugin implements DataSourcePlugin {
+  public FileFixedWidthDataSourcePlugin() {
   }
 
   public DataFactory performEdit( final DesignTimeContext context,
                                   final DataFactory input,
                                   final String queryName,
                                   final DataFactoryChangeRecorder changeRecorder ) {
-    final OpenERPDataSourceEditor editor;
+    final FileFixedWidthDataSourceEditor editor;
     final Window window = context.getParentWindow();
     if ( window instanceof JDialog ) {
-      editor = new OpenERPDataSourceEditor( context, (JDialog) window );
+      editor = new FileFixedWidthDataSourceEditor( context, (JDialog) window );
     } else if ( window instanceof JFrame ) {
-      editor = new OpenERPDataSourceEditor( context, (JFrame) window );
+      editor = new FileFixedWidthDataSourceEditor( context, (JFrame) window );
     } else {
-      editor = new OpenERPDataSourceEditor( context );
+      editor = new FileFixedWidthDataSourceEditor( context );
     }
-    return editor.performConfiguration( (OpenERPDataFactory) input );
+    return editor.performConfiguration( (FileFixedWidthDataFactory) input );
   }
 
   public boolean canHandle( final DataFactory dataFactory ) {
-    return dataFactory instanceof OpenERPDataFactory;
+    return dataFactory instanceof FileFixedWidthDataFactory;
   }
 
   public DataFactoryMetaData getMetaData() {
-    return DataFactoryRegistry.getInstance().getMetaData( OpenERPDataFactory.class.getName() );
+    return DataFactoryRegistry.getInstance().getMetaData( FileFixedWidthDataFactory.class.getName() );
   }
 }

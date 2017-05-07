@@ -15,13 +15,13 @@
  *  Copyright (c) 2006 - 2013 Pentaho Corporation..  All rights reserved.
  */
 
-package org.pentaho.reporting.ui.datasources.openerp;
+package org.pentaho.reporting.ui.datasources.filefixedwidth;
 
 import junit.framework.TestCase;
 import org.pentaho.reporting.engine.classic.core.ClassicEngineBoot;
 import org.pentaho.reporting.engine.classic.core.designtime.DataSourcePlugin;
 import org.pentaho.reporting.engine.classic.core.metadata.DataFactoryRegistry;
-import org.pentaho.reporting.engine.classic.extensions.datasources.openerp.OpenERPDataFactory;
+import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.FileFixedWidthDataFactory;
 
 public class ModuleTest extends TestCase {
   public ModuleTest() {
@@ -33,15 +33,15 @@ public class ModuleTest extends TestCase {
 
   public void testModuleExists() {
     assertTrue( ClassicEngineBoot.getInstance().getPackageManager()
-      .isModuleAvailable( OpenERPDataSourceModule.class.getName() ) );
+      .isModuleAvailable( FileFixedWidthDataSourceModule.class.getName() ) );
   }
 
   public void testEditorRegistered() {
     DataSourcePlugin editor =
-      DataFactoryRegistry.getInstance().getMetaData( OpenERPDataFactory.class.getName() ).createEditor();
+      DataFactoryRegistry.getInstance().getMetaData( FileFixedWidthDataFactory.class.getName() ).createEditor();
     assertNotNull( editor );
 
-    assertTrue( editor.canHandle( new OpenERPDataFactory() ) );
+    assertTrue( editor.canHandle( new FileFixedWidthDataFactory() ) );
   }
 
 }

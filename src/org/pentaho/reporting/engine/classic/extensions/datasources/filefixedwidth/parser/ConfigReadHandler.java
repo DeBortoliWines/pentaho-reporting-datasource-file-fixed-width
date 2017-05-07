@@ -12,10 +12,11 @@
 * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 * See the GNU Lesser General Public License for more details.
 *
+* Copyright (c) 2008 - 2009 Pentaho Corporation, .  All rights reserved.
 * Copyright (c) 2011 - 2012 De Bortoli Wines Pty Limited (Australia). All Rights Reserved.
 */
 
-package org.pentaho.reporting.engine.classic.extensions.datasources.openerp.parser;
+package org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.parser;
 
 /*
  * This program is free software; you can redistribute it and/or modify it under the
@@ -31,23 +32,28 @@ package org.pentaho.reporting.engine.classic.extensions.datasources.openerp.pars
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
+ * Copyright (c) 2008 - 2009 Pentaho Corporation, .  All rights reserved.
  * Copyright (c) 2011 - 2012 De Bortoli Wines Pty Limited (Australia). All Rights Reserved.
  */
 
-import com.debortoliwines.openerp.reporting.di.OpenERPFilterInfo;
+import com.debortoliwines.openerp.reporting.di.OpenERPConfiguration;
+import com.debortoliwines.openerp.reporting.di.OpenERPConfiguration.DataSource;
+import org.pentaho.reporting.engine.classic.core.modules.parser.base.PasswordEncryptionService;
 import org.pentaho.reporting.libraries.xmlns.parser.AbstractXmlReadHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 /**
- * Class to read search filter parameters
+ * Creation-Date: 07.04.2006, 18:35:57
  *
- * @author Pieter van der Merwe
+ * @author Thomas Morgner, Pieter van der Merwe
  */
-public class FilterReadHandler extends AbstractXmlReadHandler {
-  private OpenERPFilterInfo filter;
+public class ConfigReadHandler extends AbstractXmlReadHandler {
 
-  public FilterReadHandler() {
+  private final OpenERPConfiguration config = new OpenERPConfiguration();
+  private String queryName;
+
+  public ConfigReadHandler() {
   }
 
   /**
@@ -58,22 +64,25 @@ public class FilterReadHandler extends AbstractXmlReadHandler {
    */
   protected void startParsing( final Attributes attrs ) throws SAXException {
     super.startParsing( attrs );
+    queryName = attrs.getValue( getUri(), "queryName" );
 
-    int instanceNum;
-    try {
-      instanceNum = Integer.parseInt( attrs.getValue( getUri(), "instanceNum" ) );
-    } catch ( Exception e ) {
-      instanceNum = 1;
+    config.setHostName( attrs.getValue( getUri(), "hostName" ) );
+    config.setPortNumber( Integer.parseInt( attrs.getValue( getUri(), "portNumber" ) ) );
+    config.setDatabaseName( attrs.getValue( getUri(), "databaseName" ) );
+    config.setUserName( attrs.getValue( getUri(), "userName" ) );
+    config.setPassword(
+      PasswordEncryptionService.getInstance().decrypt( getRootHandler(), attrs.getValue( getUri(), "password" ) ) );
+    config.setModelName( attrs.getValue( getUri(), "modelName" ) );
+
+    String dataSourceStr = attrs.getValue( getUri(), "dataSource" );
+    if ( dataSourceStr != null ) {
+      config.setDataSource( DataSource.valueOf( dataSourceStr ) );
     }
 
-    filter = new OpenERPFilterInfo(
-      attrs.getValue( getUri(), "modelPath" ),
-      instanceNum,
-      attrs.getValue( getUri(), "operator" ),
-      attrs.getValue( getUri(), "fieldName" ),
-      attrs.getValue( getUri(), "comparator" ),
-      attrs.getValue( getUri(), "value" ) );
+    config.setCustomFunctionName( attrs.getValue( getUri(), "customFunctionName" ) );
+
   }
+
 
   /**
    * Returns the object for this element or null, if this element does not create an object.
@@ -85,8 +94,11 @@ public class FilterReadHandler extends AbstractXmlReadHandler {
     return null;
   }
 
-  public OpenERPFilterInfo getFilter() {
-    return filter;
+  public String getQueryName() {
+    return queryName;
   }
 
+  public OpenERPConfiguration getConfig() {
+    return config;
+  }
 }

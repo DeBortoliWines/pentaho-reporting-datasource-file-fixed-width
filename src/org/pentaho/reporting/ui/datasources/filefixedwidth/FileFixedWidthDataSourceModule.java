@@ -15,7 +15,7 @@
 * Copyright (c) 2011-2012 De Bortoli Wines Pty Limited (Australia). All Rights Reserved.
 */
 
-package org.pentaho.reporting.ui.datasources.openerp;
+package org.pentaho.reporting.ui.datasources.filefixedwidth;
 
 /*
  * This program is free software; you can redistribute it and/or modify it under the
@@ -42,8 +42,8 @@ import org.pentaho.reporting.libraries.base.boot.SubSystem;
 /**
  * @author Pieter van der Merwe
  */
-public class OpenERPDataSourceModule extends AbstractModule {
-  public OpenERPDataSourceModule() throws ModuleInitializeException {
+public class FileFixedWidthDataSourceModule extends AbstractModule {
+  public FileFixedWidthDataSourceModule() throws ModuleInitializeException {
     loadModuleInfo();
   }
 
