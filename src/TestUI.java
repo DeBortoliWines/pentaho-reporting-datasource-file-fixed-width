@@ -65,5 +65,7 @@ public class TestUI {
     dialog.setBounds(100, 100, 1024, 768);
     dialog.setModal(true);
     dialog.setVisible(true);
+    
+    config = panel.getConfiguration();
   }
 }
