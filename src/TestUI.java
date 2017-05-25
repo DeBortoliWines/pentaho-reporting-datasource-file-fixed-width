@@ -16,13 +16,13 @@ public class TestUI {
     FileFixedWidthConfiguration config = new FileFixedWidthConfiguration();
     config.setFileLocation("/home/pietercvdm/Documents/Werk/Invoice/invoice.txt");
     
-    ArrayList<Record> records = new ArrayList<Record>();
+    ArrayList<Record> records = config.getRecords();
     
     Record rec = config.new Record();
     rec.setDescription("Header");
     rec.setIdentifier("0");
     
-    ArrayList<Field> fields = new ArrayList<Field>();
+    ArrayList<Field> fields = rec.getFields();
     Field fld = config.new Field();
     fld.setFieldName("invoice_number");
     fld.setFieldType("String");
@@ -37,16 +37,13 @@ public class TestUI {
     fld.setEnd(47);
     fields.add(fld);    
     
-    Field[] fldArr = new Field[fields.size()];
-    fields.toArray(fldArr);
-    rec.setFields(fldArr);
     records.add(rec);
     
     rec = config.new Record();
     rec.setDescription("Detail");
     rec.setIdentifier("2");
     
-    fields = new ArrayList<>();
+    fields = rec.getFields();
     fld = config.new Field();
     fld.setFieldName("customer_name");
     fld.setFieldType("String");
@@ -54,14 +51,7 @@ public class TestUI {
     fld.setEnd(39);
     fields.add(fld);
     
-    fldArr = new Field[fields.size()];
-    fields.toArray(fldArr);
-    rec.setFields(fldArr);
     records.add(rec);
-    
-    Record [] rcs = new Record[records.size()];
-    records.toArray(rcs);
-    config.setRecords(rcs);
     
     // Open the dialog to configure your data source
     JDialog dialog = new JDialog();

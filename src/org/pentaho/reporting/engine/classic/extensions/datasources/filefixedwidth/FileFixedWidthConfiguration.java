@@ -1,11 +1,12 @@
 package org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class FileFixedWidthConfiguration implements Cloneable, Serializable{
 	private static final long serialVersionUID = -3246299894560148827L;
 	private String fileLocation;
-	private Record[] records = new Record[]{};
+	private ArrayList<Record> records = new ArrayList<Record>();
 	
 	@Override
 	public FileFixedWidthConfiguration clone() {
@@ -23,12 +24,8 @@ public class FileFixedWidthConfiguration implements Cloneable, Serializable{
 		this.fileLocation = fileLocation;
 	}
 	
-	public Record[] getRecords() {
+	public ArrayList<Record> getRecords() {
     return this.records;
-  }
-
-  public void setRecords(Record[] records) {
-    this.records = records;
   }
 
   public class Record implements Cloneable, Serializable{
@@ -36,7 +33,7 @@ public class FileFixedWidthConfiguration implements Cloneable, Serializable{
     
     private String description;
     private String identifier;
-    private Field[] fields = new Field[]{};
+    private ArrayList<Field> fields = new ArrayList<Field>();
     
     public String getDescription() {
       return this.description;
@@ -50,11 +47,8 @@ public class FileFixedWidthConfiguration implements Cloneable, Serializable{
     public void setIdentifier(String identifier) {
       this.identifier = identifier;
     }
-    public Field[] getFields() {
+    public ArrayList<Field> getFields() {
       return this.fields;
-    }
-    public void setFields(Field[] fields) {
-      this.fields = fields;
     }
 	}
   

@@ -4,7 +4,10 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.JTable;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.JButton;
@@ -14,6 +17,10 @@ import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidt
 import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.FileFixedWidthConfiguration.Record;
 
 import javax.swing.JScrollPane;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.awt.event.ActionEvent;
+import javax.swing.ListSelectionModel;
 
 public class FileFixedWidthPanel extends JPanel {
   private static final long serialVersionUID = -5158167375579708829L;
@@ -61,62 +68,75 @@ public class FileFixedWidthPanel extends JPanel {
 	  add(lblRecordFields);
 	  
 	  JButton btnRecordDel = new JButton("Del");
+	  btnRecordDel.addActionListener(new ActionListener() {
+	    public void actionPerformed(ActionEvent arg0) {
+	      if (tblRecords.getSelectedRow() != -1) {
+            // remove selected row from the model
+	        ((headerTableModel) tblRecords.getModel()).removeRow(tblRecords.getSelectedRow());
+        }
+	    }
+	  });
 	  btnRecordDel.setBounds(421, 68, 39, 25);
 	  add(btnRecordDel);
 	  
 	  JButton btnRecordAdd = new JButton("All");
+	  btnRecordAdd.addActionListener(new ActionListener() {
+	    public void actionPerformed(ActionEvent arg0) {
+	      ((headerTableModel) tblRecords.getModel()).addRow();
+	    }
+	  });
 	  btnRecordAdd.setBounds(370, 68, 39, 25);
 	  add(btnRecordAdd);
 	  
 	  JButton btnAddField = new JButton("All");
+	  btnAddField.addActionListener(new ActionListener() {
+	    public void actionPerformed(ActionEvent arg0) {
+	      ((fieldTableModel) tblFields.getModel()).addRow();
+	    }
+	  });
 	  btnAddField.setBounds(370, 261, 39, 25);
 	  add(btnAddField);
 	  
 	  JButton btnDeleteField = new JButton("Del");
+	  btnDeleteField.addActionListener(new ActionListener() {
+	    public void actionPerformed(ActionEvent e) {
+	      ((fieldTableModel) tblFields.getModel()).removeRows(tblFields.getSelectedRows());
+	    }
+	  });
 	  btnDeleteField.setBounds(421, 261, 39, 25);
 	  add(btnDeleteField);
 	  
-
-	  
 	  tblRecords = new JTable();
-	  tblRecords.setModel(new DefaultTableModel(
-	    new Object[][] {
-	    },
-	    new String[] {
-	      "Description", "Identifier"
-	    }
-	  ));
+	  tblRecords.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+	  tblRecords.setModel(new headerTableModel());
+	  
+	  tblRecords.getSelectionModel().addListSelectionListener(new ListSelectionListener() {     
+      @Override
+      public void valueChanged(ListSelectionEvent event) {
+        if (tblRecords.getSelectedRow() < 0)
+          return;
+        
+        ArrayList<Field> fields = ((headerTableModel) tblRecords.getModel()).getFields(tblRecords.getSelectedRow());
+        
+        /* Fill the field table with the list from the first record */
+        fieldTableModel fieldModel = (fieldTableModel) tblFields.getModel();
+        fieldModel.setFields(config, fields);
+      }
+    });
 
-	   JScrollPane scrollPane = new JScrollPane();
-	   scrollPane.setBounds(26, 95, 435, 154);
-	   scrollPane.setViewportView(tblRecords);
-	   add(scrollPane);
-	   
-	   JScrollPane scrollPane_1 = new JScrollPane();
-	   scrollPane_1.setBounds(26, 289, 435, 154);
-	   add(scrollPane_1);
-	   
-	   tblFields = new JTable();
-	   tblFields.setModel(new DefaultTableModel(
-	     new Object[][] {
-	       {null, null, null, null},
-	     },
-	     new String[] {
-	       "Field Name", "Data Type", "Start", "End"
-	     }
-	   ) {
-	     private static final long serialVersionUID = -4535986836647150193L;
-	     @SuppressWarnings("rawtypes")
-      Class[] columnTypes = new Class[] {
-	       String.class, Object.class, Integer.class, Integer.class
-	     };
-	     @SuppressWarnings({ "rawtypes", "unchecked" })
-      public Class getColumnClass(int columnIndex) {
-	       return columnTypes[columnIndex];
-	     }
-	   });
-	   tblFields.getColumnModel().getColumn(0).setPreferredWidth(177);
-	   scrollPane_1.setViewportView(tblFields);
+    JScrollPane scrollPane = new JScrollPane();
+    scrollPane.setBounds(26, 95, 435, 154);
+    scrollPane.setViewportView(tblRecords);
+    add(scrollPane);
+   
+    JScrollPane scrollPane_1 = new JScrollPane();
+    scrollPane_1.setBounds(26, 289, 435, 154);
+    add(scrollPane_1);
+   
+    tblFields = new JTable();
+    tblFields.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+    tblFields.setModel(new fieldTableModel());
+    scrollPane_1.setViewportView(tblFields);
 	}
 	
 	public void setQueryName(String queryName){
@@ -137,32 +157,152 @@ public class FileFixedWidthPanel extends JPanel {
 	    this.config = config;
 	  
 	  textFileLocation.setText(this.config.getFileLocation());
-	  DefaultTableModel recordModel = (DefaultTableModel) tblRecords.getModel();
-	  recordModel.setRowCount(0);
-	  
-	  Record[] records = config.getRecords();
-	  for (int i = 0; i < records.length; i++){
-	    recordModel.addRow(new Object[]{
-	        records[i].getDescription(),
-	        records[i].getIdentifier()
-	    });
-	  }
-
-	  /* Fill the field table with the list from the first record */
-	  DefaultTableModel fieldModel = (DefaultTableModel) tblFields.getModel();
-	  fieldModel.setRowCount(0);
-    
-	  if (records.length > 0){
-      Field[] fields = records[0].getFields();
-      for (int i = 0; i < fields.length; i++){
-        fieldModel.addRow(new Object[]{
-            fields[i].getFieldName(),
-            fields[i].getFieldType(),
-            fields[i].getStart(),
-            fields[i].getEnd()
-        });
-      }
-	  }
-
+    ((headerTableModel) tblRecords.getModel()).setConfig(this.config);
 	}
+	
+	class headerTableModel extends AbstractTableModel{
+	  private static final long serialVersionUID = 1106635947117698455L;
+    private String[] columnNames = { "Description", "Identifier" };
+    FileFixedWidthConfiguration config;
+    
+    public void setConfig(FileFixedWidthConfiguration config){
+      this.config = config;
+      this.fireTableDataChanged();
+    }
+    
+    public void addRow(){
+      Record rec = this.config.new Record();
+      this.config.getRecords().add(rec);
+      this.fireTableDataChanged();
+    }
+    
+    public void removeRow(int row){
+      this.config.getRecords().remove(row);
+      this.fireTableDataChanged();
+    }
+    
+    public ArrayList<Field> getFields(int row){
+      return this.config.getRecords().get(row).getFields();
+    }
+    
+    @Override
+	  public String getColumnName(int col) {
+      return columnNames[col];
+	  }
+	  
+    @Override
+    public int getColumnCount() {
+      return columnNames.length;
+    }
+
+    @Override
+    public int getRowCount() {
+      if (this.config == null)
+        return 0;
+            
+      return this.config.getRecords().size();
+    }
+    
+    @Override
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+      return true;
+    }
+    
+    @Override
+    public Object getValueAt(int row, int col) {
+      Record rec = this.config.getRecords().get(row);
+      
+      if (col == 0)
+        return rec.getDescription();
+      else if (col == 1)
+        return rec.getIdentifier();
+      else return null;
+    }
+    
+    @Override
+    public void setValueAt(Object aValue, int row, int col) {
+      Record rec = this.config.getRecords().get(row);
+      
+      if (col == 0)
+        rec.setDescription(aValue.toString());
+      else if (col == 1)
+        rec.setIdentifier(aValue.toString());
+    }
+	}
+	
+	class fieldTableModel extends AbstractTableModel{
+    private static final long serialVersionUID = 1106635947117698454L;
+    private String[] columnNames = { "Field Name", "Field Type", "Start", "End" };
+    ArrayList<Field> fields = new ArrayList<Field>();
+    FileFixedWidthConfiguration config;
+    
+    public void setFields(FileFixedWidthConfiguration config, ArrayList<Field> fields){
+      this.config = config;
+      this.fields = fields;
+      
+      this.fireTableDataChanged();
+    }
+    
+    public void addRow(){
+      Field fld = this.config.new Field();
+      this.fields.add(fld);
+      this.fireTableDataChanged();
+    }
+    
+    public void removeRows(int[] rows){
+      for(int i = rows.length - 1; i >= 0; i--){
+        this.fields.remove(rows[i]);
+      }
+      this.fireTableDataChanged();
+    }
+    
+    @Override
+    public String getColumnName(int col) {
+      return columnNames[col];
+    }
+    
+    @Override
+    public int getColumnCount() {
+      return columnNames.length;
+    }
+
+    @Override
+    public int getRowCount() {
+      return this.fields.size();
+    }
+    
+    @Override
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+      return true;
+    }
+    
+    @Override
+    public Object getValueAt(int row, int col) {
+      Field fld = this.fields.get(row);
+      
+      if (col == 0)
+        return fld.getFieldName();
+      else if (col == 1)
+        return fld.getFieldType();
+      else if (col == 2)
+        return fld.getStart();
+      else if (col == 3)
+        return fld.getEnd();
+      else return null;
+    }
+    
+    @Override
+    public void setValueAt(Object aValue, int row, int col) {
+      Field fld = this.fields.get(row);
+      
+      if (col == 0)
+        fld.setFieldName(aValue.toString());
+      else if (col == 1)
+        fld.setFieldType(aValue.toString());
+      else if (col == 2)
+        fld.setStart(Integer.parseInt(aValue.toString()));
+      else if (col == 3)
+        fld.setEnd(Integer.parseInt(aValue.toString()));
+    }
+  }
 }
