@@ -21,6 +21,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 import javax.swing.ListSelectionModel;
+import javax.swing.ImageIcon;
 
 public class FileFixedWidthPanel extends JPanel {
   private static final long serialVersionUID = -5158167375579708829L;
@@ -67,7 +68,8 @@ public class FileFixedWidthPanel extends JPanel {
 	  lblRecordFields.setBounds(26, 266, 139, 15);
 	  add(lblRecordFields);
 	  
-	  JButton btnRecordDel = new JButton("Del");
+	  JButton btnRecordDel = new JButton("");
+	  btnRecordDel.setIcon(new ImageIcon(FileFixedWidthPanel.class.getResource("/org/pentaho/reporting/ui/datasources/filefixedwidth/resources/Remove.png")));
 	  btnRecordDel.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent arg0) {
 	      if (tblRecords.getSelectedRow() != -1) {
@@ -79,7 +81,8 @@ public class FileFixedWidthPanel extends JPanel {
 	  btnRecordDel.setBounds(421, 68, 39, 25);
 	  add(btnRecordDel);
 	  
-	  JButton btnRecordAdd = new JButton("All");
+	  JButton btnRecordAdd = new JButton("");
+	  btnRecordAdd.setIcon(new ImageIcon(FileFixedWidthPanel.class.getResource("/org/pentaho/reporting/ui/datasources/filefixedwidth/resources/Add.png")));
 	  btnRecordAdd.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent arg0) {
 	      ((headerTableModel) tblRecords.getModel()).addRow();
@@ -88,7 +91,8 @@ public class FileFixedWidthPanel extends JPanel {
 	  btnRecordAdd.setBounds(370, 68, 39, 25);
 	  add(btnRecordAdd);
 	  
-	  JButton btnAddField = new JButton("All");
+	  JButton btnAddField = new JButton("");
+	  btnAddField.setIcon(new ImageIcon(FileFixedWidthPanel.class.getResource("/org/pentaho/reporting/ui/datasources/filefixedwidth/resources/Add.png")));
 	  btnAddField.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent arg0) {
 	      ((fieldTableModel) tblFields.getModel()).addRow();
@@ -97,7 +101,8 @@ public class FileFixedWidthPanel extends JPanel {
 	  btnAddField.setBounds(370, 261, 39, 25);
 	  add(btnAddField);
 	  
-	  JButton btnDeleteField = new JButton("Del");
+	  JButton btnDeleteField = new JButton("");
+	  btnDeleteField.setIcon(new ImageIcon(FileFixedWidthPanel.class.getResource("/org/pentaho/reporting/ui/datasources/filefixedwidth/resources/Remove.png")));
 	  btnDeleteField.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
 	      ((fieldTableModel) tblFields.getModel()).removeRows(tblFields.getSelectedRows());
