@@ -57,6 +57,7 @@ public class FileFixedWidthConfiguration implements Cloneable, Serializable{
     
     private String fieldName;
     private String fieldType;
+    private String format;
     private int start;
     private int end;
     
@@ -83,6 +84,12 @@ public class FileFixedWidthConfiguration implements Cloneable, Serializable{
     }
     public void setEnd(int end) {
       this.end = end;
+    }
+    public String getFormat() {
+      return format;
+    }
+    public void setFormat(String format) {
+      this.format = format;
     }
   }
 }

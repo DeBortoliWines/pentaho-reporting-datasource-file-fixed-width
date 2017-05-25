@@ -8,9 +8,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
+import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 
 import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.FileFixedWidthConfiguration;
 import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.FileFixedWidthConfiguration.Field;
@@ -133,9 +133,18 @@ public class FileFixedWidthPanel extends JPanel {
     scrollPane_1.setBounds(26, 289, 435, 154);
     add(scrollPane_1);
    
+    JComboBox<String> comboBox = new JComboBox<String>();
+    comboBox.addItem("String");
+    comboBox.addItem("Integer");
+    comboBox.addItem("Boolean");
+    comboBox.addItem("Date");
+    comboBox.addItem("DateTime");
+    comboBox.addItem("Double");
+    
     tblFields = new JTable();
     tblFields.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
     tblFields.setModel(new fieldTableModel());
+    tblFields.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(comboBox));;
     scrollPane_1.setViewportView(tblFields);
 	}
 	
@@ -232,7 +241,7 @@ public class FileFixedWidthPanel extends JPanel {
 	
 	class fieldTableModel extends AbstractTableModel{
     private static final long serialVersionUID = 1106635947117698454L;
-    private String[] columnNames = { "Field Name", "Field Type", "Start", "End" };
+    private String[] columnNames = { "Field Name", "Field Type", "Format", "Start", "End" };
     ArrayList<Field> fields = new ArrayList<Field>();
     FileFixedWidthConfiguration config;
     
@@ -285,8 +294,10 @@ public class FileFixedWidthPanel extends JPanel {
       else if (col == 1)
         return fld.getFieldType();
       else if (col == 2)
-        return fld.getStart();
+        return fld.getFormat();
       else if (col == 3)
+        return fld.getStart();
+      else if (col == 4)
         return fld.getEnd();
       else return null;
     }
@@ -300,8 +311,10 @@ public class FileFixedWidthPanel extends JPanel {
       else if (col == 1)
         fld.setFieldType(aValue.toString());
       else if (col == 2)
-        fld.setStart(Integer.parseInt(aValue.toString()));
+        fld.setFormat(aValue.toString());
       else if (col == 3)
+        fld.setStart(Integer.parseInt(aValue.toString()));
+      else if (col == 4)
         fld.setEnd(Integer.parseInt(aValue.toString()));
     }
   }
