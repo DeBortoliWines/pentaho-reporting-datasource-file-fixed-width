@@ -12,37 +12,18 @@
 * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 * See the GNU Lesser General Public License for more details.
 *
-* Copyright (c) 2011 - 2012 De Bortoli Wines Pty Limited (Australia). All Rights Reserved.
+* Copyright (c) 2011, 2012, 2017 De Bortoli Wines Pty Limited (Australia). All Rights Reserved.
 */
 
 package org.pentaho.reporting.ui.datasources.filefixedwidth;
 
-/*
- * This program is free software; you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License, version 2.1 as published by the Free Software
- * Foundation.
- *
- * You should have received a copy of the GNU Lesser General Public License along with this
- * program; if not, you can obtain a copy at http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
- * or from the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Lesser General Public License for more details.
- *
- * Copyright (c) 2011 - 2012 De Bortoli Wines Pty Limited (Australia). All Rights Reserved.
- */
-
-import com.debortoliwines.openerp.reporting.di.OpenERPConfiguration;
-import com.debortoliwines.openerp.reporting.di.OpenERPFieldInfo;
-import com.debortoliwines.openerp.reporting.ui.OpenERPPanel;
 import org.pentaho.reporting.engine.classic.core.DataFactory;
 import org.pentaho.reporting.engine.classic.core.ReportDataFactoryException;
 import org.pentaho.reporting.engine.classic.core.designtime.DesignTimeContext;
 import org.pentaho.reporting.engine.classic.core.designtime.datafactory.DataFactoryEditorSupport;
 import org.pentaho.reporting.engine.classic.core.modules.gui.commonswing.ExceptionDialog;
 import org.pentaho.reporting.engine.classic.core.util.ReportParameterValues;
+import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.FileFixedWidthConfiguration;
 import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.FileFixedWidthDataFactory;
 import org.pentaho.reporting.libraries.designtime.swing.CommonDialog;
 import org.pentaho.reporting.libraries.designtime.swing.background.CancelEvent;
@@ -54,7 +35,6 @@ import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.net.URL;
-import java.util.ArrayList;
 
 /**
  * @author Pieter van der Merwe
@@ -63,9 +43,7 @@ public class FileFixedWidthDataSourceEditor extends CommonDialog {
   private static final long serialVersionUID = 6685784298385723490L;
 
   private DesignTimeContext context;
-  private OpenERPPanel mainPanel;
-
-  private JTextField txtQueryName;
+  private FileFixedWidthPanel mainPanel;
 
   public FileFixedWidthDataSourceEditor( final DesignTimeContext context ) {
     init( context );
@@ -94,29 +72,18 @@ public class FileFixedWidthDataSourceEditor extends CommonDialog {
   }
 
   protected Component createContentPane() {
-    mainPanel = new OpenERPPanel();
+    mainPanel = new FileFixedWidthPanel();
     URL location =
       FileFixedWidthDataSourceEditor.class.getResource( "/org/pentaho/reporting/ui/datasources/filefixedwidth/resources/Add.png" );
-    if ( location != null ) {
+    /*
+     * if ( location != null ) {
+     
       mainPanel.setFilterAddButtonIcon( new ImageIcon( location ) );
     }
-
-    location =
-      FileFixedWidthDataSourceEditor.class.getResource( "/org/pentaho/reporting/ui/datasources/filefixedwidth/resources/Remove.png" );
-    if ( location != null ) {
-      mainPanel.setFilterRemoveButtonIcon( new ImageIcon( location ) );
-    }
-
-    txtQueryName = new JTextField( 20 );
-    txtQueryName.setText( "Query1" );
-
-    final JPanel queryPanel = new JPanel( new FlowLayout( FlowLayout.LEFT ) );
-    queryPanel.add( new JLabel( "Query Name:" ) );
-    queryPanel.add( txtQueryName );
-
+*/
+    
     final JPanel cpanel = new JPanel();
     cpanel.setLayout( new BorderLayout() );
-    cpanel.add( queryPanel, BorderLayout.NORTH );
     cpanel.add( mainPanel, BorderLayout.CENTER );
     cpanel.add( new JButton( new PreviewAction() ), BorderLayout.SOUTH );
 
@@ -125,22 +92,9 @@ public class FileFixedWidthDataSourceEditor extends CommonDialog {
 
   @Override
   protected boolean validateInputs( final boolean onConfirm ) {
-    if ( txtQueryName.getText().length() == 0 ) {
+    if ( mainPanel.getQueryName().length() == 0 ) {
       ExceptionDialog.showExceptionDialog( this, "Error", "Query Name is mandatory", null );
       return false;
-    }
-
-    final ArrayList<OpenERPFieldInfo> selectedFields = mainPanel.getConfiguration().getSelectedFields();
-    if ( selectedFields != null ) {
-      final ArrayList<String> fieldNames = new ArrayList<String>();
-      for ( final OpenERPFieldInfo fld : selectedFields ) {
-        if ( fieldNames.indexOf( fld.getRenamedFieldName() ) >= 0 ) {
-          ExceptionDialog.showExceptionDialog( this, "Error",
-            "Selected field name '" + fld.getRenamedFieldName() + "' is not unique.", null );
-          return false;
-        }
-        fieldNames.add( fld.getRenamedFieldName() );
-      }
     }
 
     return true;
@@ -148,7 +102,7 @@ public class FileFixedWidthDataSourceEditor extends CommonDialog {
 
   public DataFactory performConfiguration( final FileFixedWidthDataFactory input ) {
     if ( input != null ) {
-      txtQueryName.setText( input.getQueryName() );
+      mainPanel.setQueryName( input.getQueryName() );
       mainPanel.setConfiguration( input.getConfig() );
     }
 
@@ -162,8 +116,8 @@ public class FileFixedWidthDataSourceEditor extends CommonDialog {
   private FileFixedWidthDataFactory produceDataFactory() {
 
     final FileFixedWidthDataFactory dataFactory = new FileFixedWidthDataFactory();
-    final OpenERPConfiguration config = mainPanel.getConfiguration();
-    dataFactory.setQueryName( txtQueryName.getText() );
+    final FileFixedWidthConfiguration config = mainPanel.getConfiguration();
+    dataFactory.setQueryName( mainPanel.getQueryName() );
     dataFactory.setConfig( config );
     return dataFactory;
   }
@@ -182,7 +136,7 @@ public class FileFixedWidthDataSourceEditor extends CommonDialog {
 
         final DataPreviewDialog previewDialog = new DataPreviewDialog( FileFixedWidthDataSourceEditor.this );
 
-        final FileFixedWidthPreviewWorker worker = new FileFixedWidthPreviewWorker( dataFactory, txtQueryName.getText() );
+        final FileFixedWidthPreviewWorker worker = new FileFixedWidthPreviewWorker( dataFactory, mainPanel.getQueryName() );
         previewDialog.showData( worker );
 
         final ReportDataFactoryException factoryException = worker.getException();

@@ -36,9 +36,8 @@ package org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwid
  * Copyright (c) 2011 - 2012 De Bortoli Wines Pty Limited (Australia). All Rights Reserved.
  */
 
-import com.debortoliwines.openerp.reporting.di.OpenERPConfiguration;
-import com.debortoliwines.openerp.reporting.di.OpenERPConfiguration.DataSource;
 import org.pentaho.reporting.engine.classic.core.modules.parser.base.PasswordEncryptionService;
+import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.FileFixedWidthConfiguration;
 import org.pentaho.reporting.libraries.xmlns.parser.AbstractXmlReadHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -50,7 +49,7 @@ import org.xml.sax.SAXException;
  */
 public class ConfigReadHandler extends AbstractXmlReadHandler {
 
-  private final OpenERPConfiguration config = new OpenERPConfiguration();
+  private final FileFixedWidthConfiguration config = new FileFixedWidthConfiguration();
   private String queryName;
 
   public ConfigReadHandler() {
@@ -66,21 +65,7 @@ public class ConfigReadHandler extends AbstractXmlReadHandler {
     super.startParsing( attrs );
     queryName = attrs.getValue( getUri(), "queryName" );
 
-    config.setHostName( attrs.getValue( getUri(), "hostName" ) );
-    config.setPortNumber( Integer.parseInt( attrs.getValue( getUri(), "portNumber" ) ) );
-    config.setDatabaseName( attrs.getValue( getUri(), "databaseName" ) );
-    config.setUserName( attrs.getValue( getUri(), "userName" ) );
-    config.setPassword(
-      PasswordEncryptionService.getInstance().decrypt( getRootHandler(), attrs.getValue( getUri(), "password" ) ) );
-    config.setModelName( attrs.getValue( getUri(), "modelName" ) );
-
-    String dataSourceStr = attrs.getValue( getUri(), "dataSource" );
-    if ( dataSourceStr != null ) {
-      config.setDataSource( DataSource.valueOf( dataSourceStr ) );
-    }
-
-    config.setCustomFunctionName( attrs.getValue( getUri(), "customFunctionName" ) );
-
+    config.setFileLocation( attrs.getValue( getUri(), "fileLocation" ) );
   }
 
 
@@ -98,7 +83,7 @@ public class ConfigReadHandler extends AbstractXmlReadHandler {
     return queryName;
   }
 
-  public OpenERPConfiguration getConfig() {
+  public FileFixedWidthConfiguration getConfig() {
     return config;
   }
 }

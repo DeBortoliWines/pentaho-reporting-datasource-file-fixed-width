@@ -36,15 +36,12 @@ package org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwid
  * Copyright (c) 2011 - 2012 De Bortoli Wines Pty Limited (Australia). All Rights Reserved.
  */
 
-import com.debortoliwines.openerp.reporting.di.OpenERPConfiguration;
-import com.debortoliwines.openerp.reporting.di.OpenERPFieldInfo;
-import com.debortoliwines.openerp.reporting.di.OpenERPFilterInfo;
 import org.pentaho.reporting.engine.classic.core.DataFactory;
 import org.pentaho.reporting.engine.classic.core.modules.parser.base.DataFactoryReadHandler;
+import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.FileFixedWidthConfiguration;
 import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.FileFixedWidthDataFactory;
 import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.parser.ConfigReadHandler;
 import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.parser.FilterReadHandler;
-import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.parser.SelectedFieldReadHandler;
 import org.pentaho.reporting.libraries.xmlns.parser.AbstractXmlReadHandler;
 import org.pentaho.reporting.libraries.xmlns.parser.ParseException;
 import org.pentaho.reporting.libraries.xmlns.parser.XmlReadHandler;
@@ -60,9 +57,6 @@ public class FileFixedWidthDataSourceReadHandler extends AbstractXmlReadHandler 
   private ConfigReadHandler configReadHandler;
   private ArrayList<FilterReadHandler> filters = new ArrayList<FilterReadHandler>();
   private FileFixedWidthDataFactory dataFactory;
-
-  private ArrayList<SelectedFieldReadHandler> selectedFieldHandlers = new ArrayList<SelectedFieldReadHandler>();
-  private ArrayList<OpenERPFieldInfo> allFields = new ArrayList<OpenERPFieldInfo>();
 
   public FileFixedWidthDataSourceReadHandler() {
   }
@@ -94,12 +88,6 @@ public class FileFixedWidthDataSourceReadHandler extends AbstractXmlReadHandler 
       return filterReadHandler;
     }
 
-    if ( "selectedField".equals( tagName ) ) {
-      final SelectedFieldReadHandler selectedFieldReadHandler = new SelectedFieldReadHandler( allFields );
-      selectedFieldHandlers.add( selectedFieldReadHandler );
-      return selectedFieldReadHandler;
-    }
-
     return null;
   }
 
@@ -116,20 +104,17 @@ public class FileFixedWidthDataSourceReadHandler extends AbstractXmlReadHandler 
 
     srdf.setQueryName( configReadHandler.getQueryName() );
 
-    OpenERPConfiguration config = configReadHandler.getConfig();
+    FileFixedWidthConfiguration config = configReadHandler.getConfig();
     srdf.setConfig( config );
 
-    ArrayList<OpenERPFilterInfo> filterRows = new ArrayList<OpenERPFilterInfo>();
+    /*
+     * ArrayList<OpenERPFilterInfo> filterRows = new ArrayList<OpenERPFilterInfo>();
+     
     for ( FilterReadHandler handler : filters ) {
       filterRows.add( handler.getFilter() );
     }
     config.setFilters( filterRows );
-
-    ArrayList<OpenERPFieldInfo> selectedFields = new ArrayList<OpenERPFieldInfo>();
-    for ( SelectedFieldReadHandler handler : selectedFieldHandlers ) {
-      selectedFields.add( handler.getField() );
-    }
-    config.setSelectedFields( selectedFields );
+    */
 
     dataFactory = srdf;
   }

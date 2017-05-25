@@ -18,18 +18,7 @@
   <dependencies defaultconf="default_internal->default">
     <dependency org="${ivy.artifact.group}" name="pentaho-reporting-engine-classic-core" rev="${project.revision}" transitive="true" changing="true"/>
 
-	<!--  external dependencies -->
-    <dependency org="org.apache.xmlrpc" name="xmlrpc-client" rev="3.1.3" conf="default_external->default">
-      <exclude org="xml-apis" module="xml-apis"/>
-      <exclude org="junit" module="junit"/>
-    </dependency>
-     <!-- Explicit ws-common-util because tranisitivity from xmlrpc-client not working in approved repo routing chain -->
-    <dependency org="org.apache.ws.commons.util" name ="ws-commons-util" rev="1.0.2" conf="default_external->default" transitive="false"/>
-
-    <dependency org="com.debortoliwines.openerp" name="openerp-java-api" rev="1.1.0"  conf="default_external->default"/>
-    <dependency org="openerp" name="openerp-java-report-helper" rev="0.10.0"  conf="default_external->default"/>
-
-    <!-- Testing Dependencies -->
+	<!-- Testing Dependencies -->
     <dependency org="junit" name="junit" rev="4.10" transitive="false" conf="test->default"/>
     <dependency org="org.hsqldb" name="hsqldb" rev="2.3.2" transitive="false" conf="test->default"/>
     <dependency org="org.slf4j" name="slf4j-api" rev="1.7.3" transitive="false" conf="test->default"/>

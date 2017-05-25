@@ -17,29 +17,10 @@
 
 package org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.writer;
 
-/*
- * This program is free software; you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License, version 2.1 as published by the Free Software
- * Foundation.
- *
- * You should have received a copy of the GNU Lesser General Public License along with this
- * program; if not, you can obtain a copy at http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
- * or from the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Lesser General Public License for more details.
- *
- * Copyright (c) 2011 - 2012 De Bortoli Wines Pty Limited (Australia). All Rights Reserved.
- */
-
-import com.debortoliwines.openerp.reporting.di.OpenERPConfiguration;
-import com.debortoliwines.openerp.reporting.di.OpenERPFieldInfo;
-import com.debortoliwines.openerp.reporting.di.OpenERPFilterInfo;
-import org.pentaho.reporting.engine.classic.core.modules.parser.base.PasswordEncryptionService;
+import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.FileFixedWidthConfiguration;
 import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.FileFixedWidthDataFactory;
 import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.FileFixedWidthModule;
+import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.parser.FilterReadHandler;
 import org.pentaho.reporting.libraries.base.util.StringUtils;
 import org.pentaho.reporting.libraries.xmlns.common.AttributeList;
 import org.pentaho.reporting.libraries.xmlns.writer.XmlWriter;
@@ -67,37 +48,15 @@ public class FileFixedWidthDataFactoryHelper {
       configAttrs.setAttribute( FileFixedWidthModule.NAMESPACE, "queryName", dataFactory.getQueryName() );
     }
 
-    OpenERPConfiguration config = dataFactory.getConfig();
+    FileFixedWidthConfiguration config = dataFactory.getConfig();
 
-    if ( StringUtils.isEmpty( config.getHostName() ) == false ) {
-      configAttrs.setAttribute( FileFixedWidthModule.NAMESPACE, "hostName", config.getHostName() );
-    }
-
-    configAttrs.setAttribute( FileFixedWidthModule.NAMESPACE, "portNumber", Integer.toString( config.getPortNumber() ) );
-
-    if ( StringUtils.isEmpty( config.getDatabaseName() ) == false ) {
-      configAttrs.setAttribute( FileFixedWidthModule.NAMESPACE, "databaseName", config.getDatabaseName() );
-    }
-    if ( StringUtils.isEmpty( config.getUserName() ) == false ) {
-      configAttrs.setAttribute( FileFixedWidthModule.NAMESPACE, "userName", config.getUserName() );
-    }
-    if ( StringUtils.isEmpty( config.getPassword() ) == false ) {
-      configAttrs.setAttribute( FileFixedWidthModule.NAMESPACE,
-        "password", PasswordEncryptionService.getInstance().encrypt( config.getPassword() ) );
-    }
-    if ( StringUtils.isEmpty( config.getModelName() ) == false ) {
-      configAttrs.setAttribute( FileFixedWidthModule.NAMESPACE, "modelName", config.getModelName() );
-    }
-    if ( config.getDataSource() != null ) {
-      configAttrs.setAttribute( FileFixedWidthModule.NAMESPACE, "dataSource", config.getDataSource().name() );
-    }
-
-    if ( StringUtils.isEmpty( config.getCustomFunctionName() ) == false ) {
-      configAttrs.setAttribute( FileFixedWidthModule.NAMESPACE, "customFunctionName", config.getCustomFunctionName() );
+    if ( StringUtils.isEmpty( config.getFileLocation() ) == false ) {
+      configAttrs.setAttribute( FileFixedWidthModule.NAMESPACE, "fileLocation", config.getFileLocation() );
     }
 
     xmlWriter.writeTag( FileFixedWidthModule.NAMESPACE, "config", configAttrs, XmlWriterSupport.CLOSE );
 
+    /*
     for ( OpenERPFilterInfo filter : config.getFilters() ) {
       final AttributeList filterAttrs = new AttributeList();
       filterAttrs.setAttribute( FileFixedWidthModule.NAMESPACE, "modelPath", filter.getModelPath() );
@@ -112,12 +71,12 @@ public class FileFixedWidthDataFactoryHelper {
     for ( OpenERPFieldInfo field : config.getSelectedFields() ) {
       writeFieldInfo( xmlWriter, field );
     }
-
+*/
     xmlWriter.writeCloseTag();
     xmlWriter.close();
 
   }
-
+/*
   private static void writeFieldInfo( XmlWriter xmlWriter, OpenERPFieldInfo field ) throws IOException {
     final AttributeList selectedFieldAttrs = new AttributeList();
     selectedFieldAttrs.setAttribute( FileFixedWidthModule.NAMESPACE, "modelName", field.getModelName() );
@@ -138,4 +97,5 @@ public class FileFixedWidthDataFactoryHelper {
     }
     xmlWriter.writeCloseTag();
   }
+  */
 }

@@ -12,20 +12,13 @@
 * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 * See the GNU Lesser General Public License for more details.
 *
-* Copyright (c) 2011 - 2012 De Bortoli Wines Pty Limited (Australia). All Rights Reserved.
+* Copyright (c) 2011, 2012, 2017 De Bortoli Wines Pty Limited (Australia). All Rights Reserved.
 */
 
 package org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth;
 
-import com.debortoliwines.openerp.api.Field.FieldType;
-import com.debortoliwines.openerp.reporting.di.OpenERPConfiguration;
-import com.debortoliwines.openerp.reporting.di.OpenERPFieldInfo;
-import com.debortoliwines.openerp.reporting.di.OpenERPFilterInfo;
-import com.debortoliwines.openerp.reporting.di.OpenERPHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ws.commons.util.Base64;
-import org.apache.ws.commons.util.Base64.DecodingException;
 import org.pentaho.reporting.engine.classic.core.AbstractDataFactory;
 import org.pentaho.reporting.engine.classic.core.DataRow;
 import org.pentaho.reporting.engine.classic.core.ReportDataFactoryException;
@@ -41,10 +34,10 @@ import java.util.HashMap;
  * @author Pieter van der Merwe
  */
 public class FileFixedWidthDataFactory extends AbstractDataFactory {
-  private static final long serialVersionUID = -6235833289788633577L;
+  private static final long serialVersionUID = -6235833289788643577L;
   private static final Log logger = LogFactory.getLog( FileFixedWidthDataFactory.class );
 
-  private OpenERPConfiguration config;
+  private FileFixedWidthConfiguration config;
   private String queryName;
 
   public FileFixedWidthDataFactory() {
@@ -86,22 +79,19 @@ public class FileFixedWidthDataFactory extends AbstractDataFactory {
     final TypedTableModel resultSet = new TypedTableModel();
 
     final int queryLimit = calculateQueryLimit( parameters );
-    final OpenERPHelper helper = new OpenERPHelper();
-    final OpenERPConfiguration targetConfig = config.clone();
-    final ArrayList<OpenERPFilterInfo> configFilters = targetConfig.getFilters();
-
+    
     // Build a hashmap to pass all parameters as a dictionary to a custom OpenERP procedure
-    final HashMap<String, Object> openERPParams = new HashMap<String, Object>();
     for ( final String paramName : parameters.getColumnNames() ) {
       Object value = parameters.get( paramName );
       if ( value == null ) {
         value = false;
       }
 
-      openERPParams.put( paramName, value );
+      // TODO: insert parameter values here
     }
 
-    // Can't get selected fields from config, because we may be calling a custom function
+    // TODO: Build column list
+    /* Can't get selected fields from config, because we may be calling a custom function
     ArrayList<OpenERPFieldInfo> selectedFields = null;
     try {
       selectedFields = helper.getFields( targetConfig, openERPParams );
@@ -113,7 +103,8 @@ public class FileFixedWidthDataFactory extends AbstractDataFactory {
     for ( final OpenERPFieldInfo selectedFld : selectedFields ) {
       resultSet.addColumn( selectedFld.getRenamedFieldName(), convertFieldType( selectedFld.getFieldType() ) );
     }
-
+    */
+    
     // Called by the designer to get column layout, return a empty resultSet with columns already set
     if ( queryLimit == 1 ) {
       return resultSet;
@@ -130,7 +121,7 @@ public class FileFixedWidthDataFactory extends AbstractDataFactory {
     };
 
     // Replace parameterized filters with values from parameters
-    if ( configFilters != null ) {
+    /*if ( configFilters != null ) {
       for ( final OpenERPFilterInfo filter : configFilters ) {
         // You could have set a filter without using the Designer.  Then the filter could be any data type that
         // should not be converted to a String.
@@ -167,11 +158,13 @@ public class FileFixedWidthDataFactory extends AbstractDataFactory {
         }
       }
     }
-
+*/
+    
     // Get the data
     final Object[][] rows;
     try {
-      rows = helper.getData( targetConfig, openERPParams );
+      // TODO: Get Data
+      rows = null;
     } catch ( Exception e ) {
       throw new ReportDataFactoryException( e.getMessage(), e );
     }
@@ -180,51 +173,12 @@ public class FileFixedWidthDataFactory extends AbstractDataFactory {
     for ( int row = 0; row < rows.length; row++ ) {
       final Object[] rowData = rows[ row ];
 
-      for ( int column = 0; column < selectedFields.size(); column++ ) {
-        final OpenERPFieldInfo fld = selectedFields.get( column );
-
-        // Base64 Decode Binary
-        if ( fld.getFieldType() == FieldType.BINARY
-          && rowData[ column ] != null ) {
-          try {
-            rowData[ column ] = Base64.decode( rowData[ column ].toString() );
-          } catch ( DecodingException e ) {
-            rowData[ column ] = "Unable to decode string";
-          } catch ( Exception e ) {
-            logger.debug( "Failed to decode string on query-result: Row=" + row + " Col=" + column, e );
-          }
-        }
-
-        // Only return integer part (exclude name) from many2one field
-        if ( fld.getFieldType() == FieldType.MANY2ONE
-          && rowData[ column ] instanceof Object[] ) {
-          final Object[] value = (Object[]) rowData[ column ];
-          rowData[ column ] = Integer.parseInt( String.valueOf( value[ 0 ] ) );
-        }
-
-        // make many2many and one2many a comma separated list of values
-        if ( ( fld.getFieldType() == FieldType.MANY2MANY || fld.getFieldType() == FieldType.ONE2MANY )
-          && rowData[ column ] instanceof Object[] ) {
-
-          final StringBuilder stringValue = new StringBuilder();
-          final Object[] mcolumn = (Object[]) rowData[ column ];
-          for ( int x = 0; x < mcolumn.length; x += 1 ) {
-            if ( x != 0 ) {
-              stringValue.append( ',' );
-            }
-            stringValue.append( mcolumn[ x ] );
-          }
-
-          rowData[ column ] = stringValue.toString();
-        }
-      }
-
       resultSet.addRow( rowData );
     }
     return resultSet;
   }
 
-  private Class<?> convertFieldType( final FieldType fieldType ) {
+  /*private Class<?> convertFieldType( final FieldType fieldType ) {
     switch( fieldType ) {
       case BINARY:
         return Byte[].class;
@@ -246,9 +200,10 @@ public class FileFixedWidthDataFactory extends AbstractDataFactory {
       default:
         return String.class;
     }
+    
   }
-
-  public void setConfig( final OpenERPConfiguration config ) {
+  */
+  public void setConfig( final FileFixedWidthConfiguration config ) {
     this.config = config;
   }
 
@@ -271,7 +226,7 @@ public class FileFixedWidthDataFactory extends AbstractDataFactory {
     return dataFactory;
   }
 
-  public OpenERPConfiguration getConfig() {
+  public FileFixedWidthConfiguration getConfig() {
     return config;
   }
 }
