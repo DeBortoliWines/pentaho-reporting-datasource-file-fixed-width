@@ -35,6 +35,9 @@ public class FileFixedWidthConfiguration implements Cloneable, Serializable{
     private String identifier;
     private ArrayList<Field> fields = new ArrayList<Field>();
     
+    // This is calculated by the report generator, no need to store it to file.
+    private int recordIndex;
+    
     public String getDescription() {
       return this.description;
     }
@@ -50,6 +53,12 @@ public class FileFixedWidthConfiguration implements Cloneable, Serializable{
     public ArrayList<Field> getFields() {
       return this.fields;
     }
+    public int getRecordIndex() {
+      return recordIndex;
+    }
+    public void setRecordIndex(int recordIndex) {
+      this.recordIndex = recordIndex;
+    }
 	}
   
   public class Field implements Cloneable, Serializable{
@@ -60,6 +69,9 @@ public class FileFixedWidthConfiguration implements Cloneable, Serializable{
     private String format;
     private int start;
     private int end;
+    
+    // This is calculated by the report generator, no need to store it to file.
+    private int columnIndex;
     
     public String getFieldName() {
       return this.fieldName;
@@ -90,6 +102,12 @@ public class FileFixedWidthConfiguration implements Cloneable, Serializable{
     }
     public void setFormat(String format) {
       this.format = format;
+    }
+    public int getColumnIndex() {
+      return columnIndex;
+    }
+    public void setColumnIndex(int columnIndex) {
+      this.columnIndex = columnIndex;
     }
   }
 }

@@ -24,6 +24,8 @@ import org.pentaho.reporting.engine.classic.core.DataRow;
 import org.pentaho.reporting.engine.classic.core.ReportDataFactoryException;
 import org.pentaho.reporting.engine.classic.core.util.PropertyLookupParser;
 import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
+import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.FileFixedWidthConfiguration.Field;
+import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.FileFixedWidthConfiguration.Record;
 
 import javax.swing.table.TableModel;
 import java.util.ArrayList;
@@ -79,31 +81,21 @@ public class FileFixedWidthDataFactory extends AbstractDataFactory {
     final TypedTableModel resultSet = new TypedTableModel();
 
     final int queryLimit = calculateQueryLimit( parameters );
-    
-    // Build a hashmap to pass all parameters as a dictionary to a custom OpenERP procedure
-    for ( final String paramName : parameters.getColumnNames() ) {
-      Object value = parameters.get( paramName );
-      if ( value == null ) {
-        value = false;
+
+    // All fields that are defined are returned.  They are simply joined together.
+    int colIndex = 0;
+    for (int i = 0; i < this.config.getRecords().size(); i++) {
+      Record rec = this.config.getRecords().get(i);
+      rec.setRecordIndex(i);
+      
+      ArrayList<Field> fields = this.config.getRecords().get(i).getFields();
+      for(int j = 0; j < fields.size(); j++){
+        Field fld = fields.get(j);
+        fld.setColumnIndex(colIndex++);
+        
+        resultSet.addColumn(fld.getFieldName(), convertFieldType( fld.getFieldType() ) );
       }
-
-      // TODO: insert parameter values here
     }
-
-    // TODO: Build column list
-    /* Can't get selected fields from config, because we may be calling a custom function
-    ArrayList<OpenERPFieldInfo> selectedFields = null;
-    try {
-      selectedFields = helper.getFields( targetConfig, openERPParams );
-    } catch ( Exception e1 ) {
-      throw new ReportDataFactoryException( "Failed to select field", e1 );
-    }
-
-    // Build a field list
-    for ( final OpenERPFieldInfo selectedFld : selectedFields ) {
-      resultSet.addColumn( selectedFld.getRenamedFieldName(), convertFieldType( selectedFld.getFieldType() ) );
-    }
-    */
     
     // Called by the designer to get column layout, return a empty resultSet with columns already set
     if ( queryLimit == 1 ) {
@@ -119,46 +111,6 @@ public class FileFixedWidthDataFactory extends AbstractDataFactory {
         return parameters.get( property ).toString();
       }
     };
-
-    // Replace parameterized filters with values from parameters
-    /*if ( configFilters != null ) {
-      for ( final OpenERPFilterInfo filter : configFilters ) {
-        // You could have set a filter without using the Designer.  Then the filter could be any data type that
-        // should not be converted to a String.
-        if ( filter.getValue() instanceof String ) {
-          try {
-            final String realFilterValue = filter.getValue().toString();
-
-            // If you specify the filter on its own, try in get the object value
-            // Not all parameter values are a string.  Could be an Object[] of ids for example in a multi-select
-            // parameter
-            final Object filterValue;
-            if ( realFilterValue.length() >= 4
-              && realFilterValue.substring( 0, 2 ).equals( "${" )
-              && realFilterValue.endsWith( "}" ) ) {
-
-              final String parameterName = realFilterValue.substring( 2, realFilterValue.length() - 1 );
-              filterValue = parameters.get( parameterName );
-            }
-            // Cater for cases where users specify compound filer: "name" "like" "some${post_fix}"
-            else {
-              filterValue = parameterParser.translateAndLookup( realFilterValue, parameters );
-            }
-
-            // If the value is null, this may be a dependent query and it is waiting for a parameter.
-            // just return and wait
-            if ( filterValue == null ) {
-              return resultSet;
-            }
-
-            filter.setValue( filterValue );
-          } catch ( Exception e ) {
-            throw new ReportDataFactoryException( e.getMessage(), e );
-          }
-        }
-      }
-    }
-*/
     
     // Get the data
     final Object[][] rows;
@@ -178,31 +130,21 @@ public class FileFixedWidthDataFactory extends AbstractDataFactory {
     return resultSet;
   }
 
-  /*private Class<?> convertFieldType( final FieldType fieldType ) {
+  private Class<?> convertFieldType( final String fieldType ) {
     switch( fieldType ) {
-      case BINARY:
-        return Byte[].class;
-      case BOOLEAN:
+      case "Boolean":
         return Boolean.class;
-      case INTEGER:
+      case "Integer":
         return Integer.class;
-      case FLOAT:
+      case "Float":
         return Float.class;
-      case DATETIME:
-      case DATE:
+      case "Date":
         return Date.class;
-      case MANY2ONE:
-        return Integer.class;
-      case ONE2MANY:
-      case MANY2MANY:
-      case CHAR:
-      case TEXT:
       default:
         return String.class;
     }
-    
   }
-  */
+  
   public void setConfig( final FileFixedWidthConfiguration config ) {
     this.config = config;
   }

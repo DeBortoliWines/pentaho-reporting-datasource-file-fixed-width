@@ -143,8 +143,7 @@ public class FileFixedWidthPanel extends JPanel {
     comboBox.addItem("Integer");
     comboBox.addItem("Boolean");
     comboBox.addItem("Date");
-    comboBox.addItem("DateTime");
-    comboBox.addItem("Double");
+    comboBox.addItem("Float");
     
     tblFields = new JTable();
     tblFields.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
