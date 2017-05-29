@@ -5,9 +5,12 @@ import javax.swing.JDialog;
 
 import org.apache.xmlbeans.impl.common.IdentityConstraint.FieldState;
 import org.codehaus.groovy.transform.FieldASTTransformation;
+import org.pentaho.reporting.engine.classic.core.DataRow;
+import org.pentaho.reporting.engine.classic.core.ReportDataFactoryException;
 import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.FileFixedWidthConfiguration;
 import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.FileFixedWidthConfiguration.Field;
 import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.FileFixedWidthConfiguration.Record;
+import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.FileFixedWidthDataFactory;
 import org.pentaho.reporting.ui.datasources.filefixedwidth.FileFixedWidthPanel;
 
 public class TestUI {
@@ -67,5 +70,33 @@ public class TestUI {
     dialog.setVisible(true);
     
     config = panel.getConfiguration();
+    
+    FileFixedWidthDataFactory f = new FileFixedWidthDataFactory();
+    f.setConfig(config);
+    try {
+      f.queryData("ABC", new DataRow() {
+        
+        @Override
+        public boolean isChanged(String name) {
+          // TODO Auto-generated method stub
+          return false;
+        }
+        
+        @Override
+        public String[] getColumnNames() {
+          // TODO Auto-generated method stub
+          return null;
+        }
+        
+        @Override
+        public Object get(String col) {
+          // TODO Auto-generated method stub
+          return null;
+        }
+      });
+    } catch (ReportDataFactoryException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 }

@@ -28,9 +28,13 @@ import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidt
 import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.FileFixedWidthConfiguration.Record;
 
 import javax.swing.table.TableModel;
-import java.util.ArrayList;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import java.util.HashMap;
 
 /**
  * @author Pieter van der Merwe
@@ -72,7 +76,7 @@ public class FileFixedWidthDataFactory extends AbstractDataFactory {
    */
   public synchronized TableModel queryData( final String query, final DataRow parameters )
     throws ReportDataFactoryException {
-
+    
     /// TODO: Add more validation Here
     if ( config == null ) {
       throw new ReportDataFactoryException( "Configuration is empty." ); //$NON-NLS-1$
@@ -83,16 +87,12 @@ public class FileFixedWidthDataFactory extends AbstractDataFactory {
     final int queryLimit = calculateQueryLimit( parameters );
 
     // All fields that are defined are returned.  They are simply joined together.
-    int colIndex = 0;
     for (int i = 0; i < this.config.getRecords().size(); i++) {
       Record rec = this.config.getRecords().get(i);
       rec.setRecordIndex(i);
       
-      ArrayList<Field> fields = this.config.getRecords().get(i).getFields();
-      for(int j = 0; j < fields.size(); j++){
-        Field fld = fields.get(j);
-        fld.setColumnIndex(colIndex++);
-        
+      for(Field fld : rec.getFields()){
+        fld.setColumnIndex(resultSet.getColumnCount());
         resultSet.addColumn(fld.getFieldName(), convertFieldType( fld.getFieldType() ) );
       }
     }
@@ -113,25 +113,98 @@ public class FileFixedWidthDataFactory extends AbstractDataFactory {
     };
     
     // Get the data
-    final Object[][] rows;
+    // All rows are effectively 'inner join'ed into one row where every next record is added to the back.
+    // If a record repeats then a new line is created with all the earlier / parent data repeated.
+    Object[] rowData = null;
     try {
-      // TODO: Get Data
-      rows = null;
+      int prevRecordIndex = -1;
+      try (BufferedReader br = new BufferedReader(new FileReader(this.config.getFileLocation()))){
+        while (true){
+          String newline = br.readLine();
+          
+          // End of file, commit the last record and go
+          if (newline == null){
+            if (rowData != null)
+              resultSet.addRow( rowData );
+            
+            break;
+          }
+              
+          // Identify the record being loaded
+          Record newRecord = null;
+          for (Record r : this.config.getRecords()){
+            if (r.getIdentifier().equals(newline.substring(0, r.getIdentifier().length()))){
+              newRecord = r;
+              break;
+            }
+          }
+          
+          // Didn't define the record for this line
+          if (newRecord == null)
+            continue;
+          
+          if (rowData == null)
+            rowData = new Object[resultSet.getColumnCount()];
+          else if (newRecord.getRecordIndex() <= prevRecordIndex){     
+            // If we are getting a repeating record, get a new line
+            
+            Object[] newRow = new Object[rowData.length];
+            if (rowData != null){
+              // Save previous row first
+              resultSet.addRow( rowData );
+              
+              // Copy parent fields
+              for (Record r: this.config.getRecords()){
+                if (r.getRecordIndex() < newRecord.getRecordIndex()){
+                  for (Field f: r.getFields()){
+                    newRow[f.getColumnIndex()] = rowData[f.getColumnIndex()];
+                  }
+                }
+              }
+            }
+            
+            rowData = newRow;
+          }
+          
+          prevRecordIndex = newRecord.getRecordIndex();
+          
+          // Extract the data and pop it in the row
+          for(Field f : newRecord.getFields()){
+            
+            // In my opinion users don't think like Java and expect to stop a character after the one they want.
+            // eg "ABCD" begin 1 end 2 should be "AB" and not be "A" (Java behaviour)
+            Object data = newline.substring(f.getStart(), f.getEnd() + 1);
+            switch( f.getFieldType() ) {
+              case "Boolean":
+                data = Boolean.parseBoolean(data.toString());
+              case "Integer":
+                data = Integer.parseInt(data.toString());
+              case "Float":
+                data =  Float.parseFloat(data.toString());
+              case "Date":
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern(f.getFormat());
+                data = LocalDateTime.from(dtf.parse(data.toString()));
+              default:
+                data = data.toString();
+            }
+            rowData[f.getColumnIndex()] = data; 
+          }
+        } // While true
+      } // Try      
+    } catch (FileNotFoundException e1) {
+      throw new ReportDataFactoryException( "Could not find file: " 
+          + this.config.getFileLocation(), e1 );
     } catch ( Exception e ) {
       throw new ReportDataFactoryException( e.getMessage(), e );
     }
 
-    // Add data to resultSet and do some data transformations
-    for ( int row = 0; row < rows.length; row++ ) {
-      final Object[] rowData = rows[ row ];
-
-      resultSet.addRow( rowData );
-    }
     return resultSet;
   }
 
   private Class<?> convertFieldType( final String fieldType ) {
-    switch( fieldType ) {
+    if (fieldType == null)
+      return String.class;
+    else switch( fieldType ) {
       case "Boolean":
         return Boolean.class;
       case "Integer":
