@@ -52,7 +52,7 @@ public class FileFixedWidthDataFactoryHelper {
     FileFixedWidthConfiguration config = dataFactory.getConfig();
 
     if ( StringUtils.isEmpty( config.getFileLocation() ) == false ) {
-      configAttrs.setAttribute( FileFixedWidthModule.NAMESPACE, "Z", config.getFileLocation() );
+      configAttrs.setAttribute( FileFixedWidthModule.NAMESPACE, "fileLocation", config.getFileLocation() );
     }
 
     xmlWriter.writeTag( FileFixedWidthModule.NAMESPACE, "config", configAttrs, XmlWriterSupport.CLOSE );
