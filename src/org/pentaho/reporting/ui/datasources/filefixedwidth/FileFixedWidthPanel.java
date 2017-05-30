@@ -150,6 +150,8 @@ public class FileFixedWidthPanel extends JPanel {
     tblFields.setModel(new fieldTableModel());
     tblFields.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(comboBox));;
     scrollPane_1.setViewportView(tblFields);
+    
+    ((headerTableModel) tblRecords.getModel()).setConfig(this.config);
 	}
 	
 	public void setQueryName(String queryName){
