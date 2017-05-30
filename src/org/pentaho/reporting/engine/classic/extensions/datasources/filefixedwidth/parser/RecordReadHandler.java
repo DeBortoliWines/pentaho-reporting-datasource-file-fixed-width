@@ -12,24 +12,31 @@
 * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 * See the GNU Lesser General Public License for more details.
 *
-* Copyright (c) 2011 - 2012 De Bortoli Wines Pty Limited (Australia). All Rights Reserved.
+* Copyright (c) 2017 De Bortoli Wines Pty Limited (Australia). All Rights Reserved.
 */
 
 package org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.parser;
+
+import java.util.ArrayList;
 
 import org.pentaho.reporting.libraries.xmlns.parser.AbstractXmlReadHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 /**
- * Class to read search filter parameters
+ * Class to read Records
  *
  * @author Pieter van der Merwe
  */
-public class FilterReadHandler extends AbstractXmlReadHandler {
+public class RecordReadHandler extends AbstractXmlReadHandler {
   
-  public FilterReadHandler() {
+  private ArrayList<FieldReadHandler> fieldReadHandlers = new ArrayList<FieldReadHandler>();
+  
+  public RecordReadHandler() {
   }
+  
+  private String description;
+  private String identifier;
 
   /**
    * Starts parsing.
@@ -39,23 +46,9 @@ public class FilterReadHandler extends AbstractXmlReadHandler {
    */
   protected void startParsing( final Attributes attrs ) throws SAXException {
     super.startParsing( attrs );
-
-    int instanceNum;
-    try {
-      instanceNum = Integer.parseInt( attrs.getValue( getUri(), "instanceNum" ) );
-    } catch ( Exception e ) {
-      instanceNum = 1;
-    }
-
-    /*
-     
-      attrs.getValue( getUri(), "modelPath" ),
-      instanceNum,
-      attrs.getValue( getUri(), "operator" ),
-      attrs.getValue( getUri(), "fieldName" ),
-      attrs.getValue( getUri(), "comparator" ),
-      attrs.getValue( getUri(), "value" ) );
-      */
+    
+    description = attrs.getValue( getUri(), "description" );
+    identifier = attrs.getValue( getUri(), "identifier" );
   }
 
   /**
@@ -67,9 +60,20 @@ public class FilterReadHandler extends AbstractXmlReadHandler {
   public Object getObject() throws SAXException {
     return null;
   }
+  
+  public void addFieldHandle(FieldReadHandler f){
+    fieldReadHandlers.add(f);
+  }
+  
+  public ArrayList<FieldReadHandler> getFieldHandle(){
+    return fieldReadHandlers;
+  }
 
-  /*public OpenERPFilterInfo getFilter() {
-    return filter;
-  }*/
-
+  public String getDescription() {
+    return description;
+  }
+  
+  public String getIdentifier(){
+    return identifier;
+  }
 }

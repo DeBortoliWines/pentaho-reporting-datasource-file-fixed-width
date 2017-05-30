@@ -12,29 +12,30 @@
 * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 * See the GNU Lesser General Public License for more details.
 *
-* Copyright (c) 2008 - 2009 Pentaho Corporation, .  All rights reserved.
-* Copyright (c) 2011 - 2012, 2017 De Bortoli Wines Pty Limited (Australia). All Rights Reserved.
+* Copyright (c) 2017 De Bortoli Wines Pty Limited (Australia). All Rights Reserved.
 */
 
 package org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.parser;
 
-import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.FileFixedWidthConfiguration;
 import org.pentaho.reporting.libraries.xmlns.parser.AbstractXmlReadHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 /**
- * Creation-Date: 07.04.2006, 18:35:57
+ * Class to read Records
  *
- * @author Thomas Morgner, Pieter van der Merwe
+ * @author Pieter van der Merwe
  */
-public class ConfigReadHandler extends AbstractXmlReadHandler {
-
-  private final FileFixedWidthConfiguration config = new FileFixedWidthConfiguration();
-  private String queryName;
-
-  public ConfigReadHandler() {
+public class FieldReadHandler extends AbstractXmlReadHandler {
+  
+  public FieldReadHandler() {
   }
+  
+  private String fieldName;
+  private String fieldType;
+  private String format;
+  private int start;
+  private int end;
 
   /**
    * Starts parsing.
@@ -44,11 +45,25 @@ public class ConfigReadHandler extends AbstractXmlReadHandler {
    */
   protected void startParsing( final Attributes attrs ) throws SAXException {
     super.startParsing( attrs );
-    queryName = attrs.getValue( getUri(), "queryName" );
-
-    config.setFileLocation( attrs.getValue( getUri(), "fileLocation" ) );
+    
+    fieldName = attrs.getValue( getUri(), "fieldName" );
+    fieldType = attrs.getValue( getUri(), "fieldType" );
+    format = attrs.getValue( getUri(), "format" );
+    try{
+      start = Integer.parseInt(attrs.getValue( getUri(), "start" ));
+    }
+    catch (Exception e){
+      start = 0;
+    }
+    
+    try{
+      end = Integer.parseInt(attrs.getValue( getUri(), "end" ));
+    }
+    catch (Exception e){
+      end = 0;
+    }
   }
-  
+
   /**
    * Returns the object for this element or null, if this element does not create an object.
    *
@@ -59,11 +74,23 @@ public class ConfigReadHandler extends AbstractXmlReadHandler {
     return null;
   }
 
-  public String getQueryName() {
-    return queryName;
+  public String getFieldName() {
+    return fieldName;
   }
 
-  public FileFixedWidthConfiguration getConfig() {
-    return config;
+  public String getFieldType() {
+    return fieldType;
+  }
+
+  public String getFormat() {
+    return format;
+  }
+
+  public int getStart() {
+    return start;
+  }
+
+  public int getEnd() {
+    return end;
   }
 }

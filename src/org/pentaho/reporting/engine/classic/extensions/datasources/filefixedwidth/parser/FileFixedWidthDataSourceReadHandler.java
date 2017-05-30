@@ -39,9 +39,11 @@ package org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwid
 import org.pentaho.reporting.engine.classic.core.DataFactory;
 import org.pentaho.reporting.engine.classic.core.modules.parser.base.DataFactoryReadHandler;
 import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.FileFixedWidthConfiguration;
+import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.FileFixedWidthConfiguration.Field;
+import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.FileFixedWidthConfiguration.Record;
 import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.FileFixedWidthDataFactory;
 import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.parser.ConfigReadHandler;
-import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.parser.FilterReadHandler;
+import org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.parser.RecordReadHandler;
 import org.pentaho.reporting.libraries.xmlns.parser.AbstractXmlReadHandler;
 import org.pentaho.reporting.libraries.xmlns.parser.ParseException;
 import org.pentaho.reporting.libraries.xmlns.parser.XmlReadHandler;
@@ -55,7 +57,8 @@ import java.util.ArrayList;
  */
 public class FileFixedWidthDataSourceReadHandler extends AbstractXmlReadHandler implements DataFactoryReadHandler {
   private ConfigReadHandler configReadHandler;
-  private ArrayList<FilterReadHandler> filters = new ArrayList<FilterReadHandler>();
+  private RecordReadHandler currentRecordReadHandler;
+  private ArrayList<RecordReadHandler> recordReadHandlers = new ArrayList<RecordReadHandler>();
   private FileFixedWidthDataFactory dataFactory;
 
   public FileFixedWidthDataSourceReadHandler() {
@@ -82,17 +85,31 @@ public class FileFixedWidthDataSourceReadHandler extends AbstractXmlReadHandler 
       return configReadHandler;
     }
 
-    if ( "filter".equals( tagName ) ) {
-      final FilterReadHandler filterReadHandler = new FilterReadHandler();
-      filters.add( filterReadHandler );
-      return filterReadHandler;
+    if ( "record".equals( tagName ) ) {
+      currentRecordReadHandler = new RecordReadHandler();
+      recordReadHandlers.add( currentRecordReadHandler );
+      return currentRecordReadHandler;
+    }
+    
+    if ( "field".equals( tagName ) ) {
+      final FieldReadHandler fieldReadHandler = new FieldReadHandler();
+    
+      /* The assumption is that:
+       * 1. GetHandlerForChild is called per child element
+       * 2. GetHandlerForChild is called in sequence as data is parsed.
+       * If these assumptions don't hold then currentRecordReadHandler will not be set
+       * to the parent of the 'field' element that we are trying to add.
+       */
+      currentRecordReadHandler.addFieldHandle(fieldReadHandler);
+      
+      return fieldReadHandler;
     }
 
     return null;
   }
 
   /**
-   * Done parsing.
+   * Done parsing - For this element only, it isn't the same as EndElement
    *
    * @throws SAXException if there is a parsing error.
    */
@@ -106,15 +123,25 @@ public class FileFixedWidthDataSourceReadHandler extends AbstractXmlReadHandler 
 
     FileFixedWidthConfiguration config = configReadHandler.getConfig();
     srdf.setConfig( config );
-
-    /*
-     * ArrayList<OpenERPFilterInfo> filterRows = new ArrayList<OpenERPFilterInfo>();
-     
-    for ( FilterReadHandler handler : filters ) {
-      filterRows.add( handler.getFilter() );
+    
+    for(RecordReadHandler rh : recordReadHandlers){
+      Record r = config.new Record();
+      r.setIdentifier(rh.getIdentifier());
+      r.setDescription(rh.getDescription());
+      
+      for(FieldReadHandler fh : rh.getFieldHandle()){
+        Field f = config.new Field();
+        f.setFieldName(fh.getFieldName());
+        f.setFieldType(fh.getFieldType());
+        f.setFormat(fh.getFormat());
+        f.setStart(fh.getStart());
+        f.setEnd(fh.getEnd());
+        
+        r.getFields().add(f);
+      }
+        
+      config.getRecords().add(r);
     }
-    config.setFilters( filterRows );
-    */
 
     dataFactory = srdf;
   }
