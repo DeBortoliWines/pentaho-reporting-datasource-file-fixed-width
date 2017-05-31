@@ -34,7 +34,6 @@ import javax.swing.*;
 import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.net.URL;
 
 /**
  * @author Pieter van der Merwe
@@ -68,19 +67,11 @@ public class FileFixedWidthDataSourceEditor extends CommonDialog {
   }
 
   protected String getDialogId() {
-    return "OpenERPDataSourceEditor";
+    return "FileFixedWidthDataSourceEditor";
   }
 
   protected Component createContentPane() {
     mainPanel = new FileFixedWidthPanel();
-    URL location =
-      FileFixedWidthDataSourceEditor.class.getResource( "/org/pentaho/reporting/ui/datasources/filefixedwidth/resources/Add.png" );
-    /*
-     * if ( location != null ) {
-     
-      mainPanel.setFilterAddButtonIcon( new ImageIcon( location ) );
-    }
-*/
     
     final JPanel cpanel = new JPanel();
     cpanel.setLayout( new BorderLayout() );
