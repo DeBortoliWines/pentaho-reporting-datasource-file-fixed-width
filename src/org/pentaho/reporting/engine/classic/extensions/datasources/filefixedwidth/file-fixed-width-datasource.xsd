@@ -24,6 +24,7 @@
     <xsd:complexType>
       <xsd:sequence>
         <xsd:element ref="config" minOccurs="1" maxOccurs="1"/>
+        <xsd:element ref="record" minOccurs="0"/>
       </xsd:sequence>
     </xsd:complexType>
   </xsd:element>
@@ -34,13 +35,22 @@
       <xsd:attribute name="fileLocation" type="xsd:string"/>
     </xsd:complexType>
   </xsd:element>
-
-<!--   <xsd:element name="filter"> -->
-<!--     <xsd:complexType> -->
-<!--       <xsd:attribute name="operator" type="xsd:string"/> -->
-<!--       <xsd:attribute name="fieldName" type="xsd:string"/> -->
-<!--       <xsd:attribute name="comparator" type="xsd:string"/> -->
-<!--       <xsd:attribute name="value" type="xsd:string"/> -->
-<!--     </xsd:complexType> -->
-<!--   </xsd:element> -->
+       
+  <xsd:element name="record">
+    <xsd:complexType>
+      <xsd:sequence>
+		  <xsd:element name="field">
+			  <xsd:complexType>
+    			<xsd:attribute name="fieldName" type="xsd:string"/>
+		      	<xsd:attribute name="fieldType" type="xsd:string"/>
+		      	<xsd:attribute name="format" type="xsd:string"/>
+		      	<xsd:attribute name="start" type="xsd:integer"/>
+		      	<xsd:attribute name="end" type="xsd:integer"/>
+		      </xsd:complexType>
+		  </xsd:element>
+	  </xsd:sequence>	  
+      <xsd:attribute name="description" type="xsd:string"/>
+      <xsd:attribute name="identifier" type="xsd:string"/>
+	 </xsd:complexType>
+  </xsd:element>
 </xsd:schema>

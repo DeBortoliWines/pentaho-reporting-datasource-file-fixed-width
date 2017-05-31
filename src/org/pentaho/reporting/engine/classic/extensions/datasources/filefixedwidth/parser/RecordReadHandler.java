@@ -19,7 +19,10 @@ package org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwid
 
 import java.util.ArrayList;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.pentaho.reporting.libraries.xmlns.parser.AbstractXmlReadHandler;
+import org.pentaho.reporting.libraries.xmlns.parser.XmlReadHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -31,6 +34,8 @@ import org.xml.sax.SAXException;
 public class RecordReadHandler extends AbstractXmlReadHandler {
   
   private ArrayList<FieldReadHandler> fieldReadHandlers = new ArrayList<FieldReadHandler>();
+  @SuppressWarnings("unused")
+  private static final Log logger = LogFactory.getLog( RecordReadHandler.class );
   
   public RecordReadHandler() {
   }
@@ -50,6 +55,31 @@ public class RecordReadHandler extends AbstractXmlReadHandler {
     description = attrs.getValue( getUri(), "description" );
     identifier = attrs.getValue( getUri(), "identifier" );
   }
+  
+  /**
+   * Returns the handler for a child element.
+   *
+   * @param uri     the URI of the namespace of the current element.
+   * @param tagName the tag name.
+   * @param atts    the attributes.
+   * @return the handler or null, if the tagname is invalid.
+   * @throws SAXException if there is a parsing error.
+   */
+  protected XmlReadHandler getHandlerForChild( final String uri,
+                                               final String tagName,
+                                               final Attributes atts ) throws SAXException {
+    if ( isSameNamespace( uri ) == false ) {
+      return null;
+    }
+
+    if ( "field".equals( tagName ) ) {
+      final FieldReadHandler fieldReadHandler = new FieldReadHandler();
+      fieldReadHandlers.add(fieldReadHandler);
+      return fieldReadHandler;
+    }
+    
+    return null;
+  }
 
   /**
    * Returns the object for this element or null, if this element does not create an object.
@@ -61,11 +91,7 @@ public class RecordReadHandler extends AbstractXmlReadHandler {
     return null;
   }
   
-  public void addFieldHandle(FieldReadHandler f){
-    fieldReadHandlers.add(f);
-  }
-  
-  public ArrayList<FieldReadHandler> getFieldHandle(){
+  public ArrayList<FieldReadHandler> getFieldHandles(){
     return fieldReadHandlers;
   }
 

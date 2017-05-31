@@ -18,6 +18,9 @@
 
 package org.pentaho.reporting.engine.classic.extensions.datasources.filefixedwidth.parser;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /*
  * This program is free software; you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License, version 2.1 as published by the Free Software
@@ -60,6 +63,8 @@ public class FileFixedWidthDataSourceReadHandler extends AbstractXmlReadHandler 
   private RecordReadHandler currentRecordReadHandler;
   private ArrayList<RecordReadHandler> recordReadHandlers = new ArrayList<RecordReadHandler>();
   private FileFixedWidthDataFactory dataFactory;
+  @SuppressWarnings("unused")
+  private static final Log logger = LogFactory.getLog( FileFixedWidthDataSourceReadHandler.class );
 
   public FileFixedWidthDataSourceReadHandler() {
   }
@@ -79,7 +84,7 @@ public class FileFixedWidthDataSourceReadHandler extends AbstractXmlReadHandler 
     if ( isSameNamespace( uri ) == false ) {
       return null;
     }
-
+    
     if ( "config".equals( tagName ) ) {
       configReadHandler = new ConfigReadHandler();
       return configReadHandler;
@@ -91,20 +96,6 @@ public class FileFixedWidthDataSourceReadHandler extends AbstractXmlReadHandler 
       return currentRecordReadHandler;
     }
     
-    if ( "field".equals( tagName ) ) {
-      final FieldReadHandler fieldReadHandler = new FieldReadHandler();
-    
-      /* The assumption is that:
-       * 1. GetHandlerForChild is called per child element
-       * 2. GetHandlerForChild is called in sequence as data is parsed.
-       * If these assumptions don't hold then currentRecordReadHandler will not be set
-       * to the parent of the 'field' element that we are trying to add.
-       */
-      currentRecordReadHandler.addFieldHandle(fieldReadHandler);
-      
-      return fieldReadHandler;
-    }
-
     return null;
   }
 
@@ -129,7 +120,7 @@ public class FileFixedWidthDataSourceReadHandler extends AbstractXmlReadHandler 
       r.setIdentifier(rh.getIdentifier());
       r.setDescription(rh.getDescription());
       
-      for(FieldReadHandler fh : rh.getFieldHandle()){
+      for(FieldReadHandler fh : rh.getFieldHandles()){
         Field f = config.new Field();
         f.setFieldName(fh.getFieldName());
         f.setFieldType(fh.getFieldType());
