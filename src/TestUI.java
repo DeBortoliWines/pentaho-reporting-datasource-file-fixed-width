@@ -61,7 +61,7 @@ public class TestUI {
     dialog.getContentPane().setLayout(new BorderLayout());
     FileFixedWidthPanel panel = new FileFixedWidthPanel();
     panel.setQueryName("Queue1");
-    panel.setConfiguration(config);
+    panel.setConfiguration(config.clone());
     panel.setVisible(true);
     dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
     dialog.getContentPane().add(panel,BorderLayout.CENTER);

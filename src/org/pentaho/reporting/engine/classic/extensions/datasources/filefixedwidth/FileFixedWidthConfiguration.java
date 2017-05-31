@@ -13,6 +13,25 @@ public class FileFixedWidthConfiguration implements Cloneable, Serializable{
 		FileFixedWidthConfiguration newObject = new FileFixedWidthConfiguration();
     
 		newObject.setFileLocation(this.getFileLocation());
+		for(Record r : this.getRecords()){
+		  Record newRecord = newObject.new Record();
+		  newRecord.setDescription(r.getDescription());
+		  newRecord.setIdentifier(r.getIdentifier());
+		  newRecord.setRecordIndex(r.getRecordIndex());
+		  
+		  for (Field f: r.getFields()){
+		    Field newField = newObject.new Field();
+		    newField.setFieldName(f.getFieldName());
+		    newField.setFieldType(f.getFieldType());
+		    newField.setFormat(f.getFormat());
+		    newField.setStart(f.getStart());
+		    newField.setEnd(f.getEnd());
+		    
+		    newRecord.getFields().add(newField);
+		  }
+		  
+		  newObject.getRecords().add(newRecord);
+		}
 		return newObject;
 	}
 
