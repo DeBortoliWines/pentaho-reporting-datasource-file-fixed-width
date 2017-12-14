@@ -29,7 +29,7 @@ import org.pentaho.reporting.libraries.xmlns.writer.XmlWriter;
 import java.io.IOException;
 
 /**
- * @author Pieter van der Merwe
+ * @author Pieter van der Merwe and Ben Letchford
  */
 public class FileFixedWidthDataFactoryWriteHandler implements DataFactoryWriteHandler {
   public FileFixedWidthDataFactoryWriteHandler() {

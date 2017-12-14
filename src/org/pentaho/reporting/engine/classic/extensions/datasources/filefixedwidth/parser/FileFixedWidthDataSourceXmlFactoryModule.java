@@ -25,7 +25,7 @@ import org.pentaho.reporting.libraries.xmlns.parser.XmlFactoryModule;
 import org.pentaho.reporting.libraries.xmlns.parser.XmlReadHandler;
 
 /**
- * @author Pieter van der Merwe
+ * @author Pieter van der Merwe and Ben Letchford
  */
 public class FileFixedWidthDataSourceXmlFactoryModule implements XmlFactoryModule {
   public FileFixedWidthDataSourceXmlFactoryModule() {

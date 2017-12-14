@@ -46,33 +46,31 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * @author Pieter van der Merwe
+ * @author Pieter van der Merwe and Ben Letchford
  */
 public class FileFixedWidthDataSourcePlugin implements DataSourcePlugin {
-  public FileFixedWidthDataSourcePlugin() {
-  }
+	public FileFixedWidthDataSourcePlugin() {
+	}
 
-  public DataFactory performEdit( final DesignTimeContext context,
-                                  final DataFactory input,
-                                  final String queryName,
-                                  final DataFactoryChangeRecorder changeRecorder ) {
-    final FileFixedWidthDataSourceEditor editor;
-    final Window window = context.getParentWindow();
-    if ( window instanceof JDialog ) {
-      editor = new FileFixedWidthDataSourceEditor( context, (JDialog) window );
-    } else if ( window instanceof JFrame ) {
-      editor = new FileFixedWidthDataSourceEditor( context, (JFrame) window );
-    } else {
-      editor = new FileFixedWidthDataSourceEditor( context );
-    }
-    return editor.performConfiguration( (FileFixedWidthDataFactory) input );
-  }
+	public DataFactory performEdit(final DesignTimeContext context, final DataFactory input, final String queryName,
+			final DataFactoryChangeRecorder changeRecorder) {
+		final FileFixedWidthDataSourceEditor editor;
+		final Window window = context.getParentWindow();
+		if (window instanceof JDialog) {
+			editor = new FileFixedWidthDataSourceEditor(context, (JDialog) window);
+		} else if (window instanceof JFrame) {
+			editor = new FileFixedWidthDataSourceEditor(context, (JFrame) window);
+		} else {
+			editor = new FileFixedWidthDataSourceEditor(context);
+		}
+		return editor.performConfiguration((FileFixedWidthDataFactory) input);
+	}
 
-  public boolean canHandle( final DataFactory dataFactory ) {
-    return dataFactory instanceof FileFixedWidthDataFactory;
-  }
+	public boolean canHandle(final DataFactory dataFactory) {
+		return dataFactory instanceof FileFixedWidthDataFactory;
+	}
 
-  public DataFactoryMetaData getMetaData() {
-    return DataFactoryRegistry.getInstance().getMetaData( FileFixedWidthDataFactory.class.getName() );
-  }
+	public DataFactoryMetaData getMetaData() {
+		return DataFactoryRegistry.getInstance().getMetaData(FileFixedWidthDataFactory.class.getName());
+	}
 }

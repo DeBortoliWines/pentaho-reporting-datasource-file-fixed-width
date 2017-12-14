@@ -1722,7 +1722,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       Creates a gzipped tar of the project source for distribution
       ====================================================================-->
   <target name="source.targz" depends="init">
-    <tar compression="gzip" destfile="${dist.dir}/${source.tar.filename}" basedir="${src.dir}"/>
+    <tar compression="gzip" destfile="${dist.dir}/${source.tar.filename}" basedir="${src.dir}" longfile="gnu"/>
   </target>
 
 

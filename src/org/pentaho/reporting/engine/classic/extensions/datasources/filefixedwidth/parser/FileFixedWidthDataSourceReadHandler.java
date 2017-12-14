@@ -56,7 +56,7 @@ import org.xml.sax.SAXException;
 import java.util.ArrayList;
 
 /**
- * @author Pieter van der Merwe
+ * @author Pieter van der Merwe and Ben Letchford
  */
 public class FileFixedWidthDataSourceReadHandler extends AbstractXmlReadHandler implements DataFactoryReadHandler {
   private ConfigReadHandler configReadHandler;

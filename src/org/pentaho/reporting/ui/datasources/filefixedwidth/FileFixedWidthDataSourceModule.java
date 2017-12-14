@@ -40,7 +40,7 @@ import org.pentaho.reporting.libraries.base.boot.ModuleInitializeException;
 import org.pentaho.reporting.libraries.base.boot.SubSystem;
 
 /**
- * @author Pieter van der Merwe
+ * @author Pieter van der Merwe and Ben Letchford
  */
 public class FileFixedWidthDataSourceModule extends AbstractModule {
   public FileFixedWidthDataSourceModule() throws ModuleInitializeException {

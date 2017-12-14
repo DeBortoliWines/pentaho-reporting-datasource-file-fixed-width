@@ -29,6 +29,7 @@ import org.pentaho.reporting.libraries.designtime.swing.CommonDialog;
 import org.pentaho.reporting.libraries.designtime.swing.background.CancelEvent;
 import org.pentaho.reporting.libraries.designtime.swing.background.DataPreviewDialog;
 import org.pentaho.reporting.libraries.designtime.swing.background.PreviewWorker;
+import org.pentaho.reporting.libraries.designtime.swing.VerticalLayout;
 
 import javax.swing.*;
 import javax.swing.table.TableModel;
@@ -36,160 +37,162 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 
 /**
- * @author Pieter van der Merwe
+ * @author Pieter van der Merwe and Ben Letchford
  */
 public class FileFixedWidthDataSourceEditor extends CommonDialog {
-  private static final long serialVersionUID = 6685784298385723490L;
+	private static final long serialVersionUID = 6685784298385723490L;
 
-  private DesignTimeContext context;
-  private FileFixedWidthPanel mainPanel;
+	private DesignTimeContext context;
+	private FileFixedWidthPanel mainPanel;
 
-  public FileFixedWidthDataSourceEditor( final DesignTimeContext context ) {
-    init( context );
-  }
+	public FileFixedWidthDataSourceEditor(final DesignTimeContext context) {
+		init(context);
+	}
 
-  public FileFixedWidthDataSourceEditor( final DesignTimeContext context, final Frame owner )
-    throws HeadlessException {
-    super( owner );
-    init( context );
-  }
+	public FileFixedWidthDataSourceEditor(final DesignTimeContext context, final Frame owner) throws HeadlessException {
+		super(owner);
+		init(context);
+	}
 
-  public FileFixedWidthDataSourceEditor( final DesignTimeContext context, final Dialog owner )
-    throws HeadlessException {
-    super( owner );
-    init( context );
-  }
+	public FileFixedWidthDataSourceEditor(final DesignTimeContext context, final Dialog owner)
+			throws HeadlessException {
+		super(owner);
+		init(context);
+	}
 
-  private void init( final DesignTimeContext context ) {
-    this.context = context;
+	private void init(final DesignTimeContext context) {
+		this.context = context;
 
-    super.init();
-  }
+		super.init();
+	}
 
-  protected String getDialogId() {
-    return "FileFixedWidthDataSourceEditor";
-  }
+	protected String getDialogId() {
+		return "FileFixedWidthDataSourceEditor";
+	}
 
-  protected Component createContentPane() {
-    mainPanel = new FileFixedWidthPanel();
-    
-    final JPanel cpanel = new JPanel();
-    cpanel.setLayout( new BorderLayout() );
-    cpanel.add( mainPanel, BorderLayout.CENTER );
-    cpanel.add( new JButton( new PreviewAction() ), BorderLayout.SOUTH );
+	protected Component createContentPane() {
+		mainPanel = new FileFixedWidthPanel();
 
-    return cpanel;
-  }
+		final JPanel cpanel = new JPanel();
+		cpanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		cpanel.setLayout(new VerticalLayout(5, VerticalLayout.BOTH));
+		cpanel.add(mainPanel);
+		cpanel.add(new JButton(new PreviewAction()), BorderLayout.SOUTH);
 
-  @Override
-  protected boolean validateInputs( final boolean onConfirm ) {
-    if ( mainPanel.getQueryName().length() == 0 ) {
-      ExceptionDialog.showExceptionDialog( this, "Error", "Query Name is mandatory", null );
-      return false;
-    }
+		return cpanel;
+	}
 
-    return true;
-  }
+	@Override
+	protected boolean validateInputs(final boolean onConfirm) {
+		if (mainPanel.getQueryName().length() == 0) {
+			ExceptionDialog.showExceptionDialog(this, "Error", "Query Name is mandatory", null);
+			return false;
+		}
 
-  public DataFactory performConfiguration( final FileFixedWidthDataFactory input ) {
-    if ( input != null ) {
-      mainPanel.setQueryName( input.getQueryName() );
-      mainPanel.setConfiguration( input.getConfig() );
-    }
+		return true;
+	}
 
-    if ( performEdit() == false ) {
-      return null;
-    }
+	public DataFactory performConfiguration(final FileFixedWidthDataFactory input) {
+		if (input != null) {
+			mainPanel.setQueryName(input.getQueryName());
+			mainPanel.setConfiguration(input.getConfig());
+		}
 
-    return produceDataFactory();
-  }
+		if (performEdit() == false) {
+			return null;
+		}
 
-  private FileFixedWidthDataFactory produceDataFactory() {
+		return produceDataFactory();
+	}
 
-    final FileFixedWidthDataFactory dataFactory = new FileFixedWidthDataFactory();
-    final FileFixedWidthConfiguration config = mainPanel.getConfiguration();
-    dataFactory.setQueryName( mainPanel.getQueryName() );
-    dataFactory.setConfig( config );
-    return dataFactory;
-  }
+	private FileFixedWidthDataFactory produceDataFactory() {
 
-  private class PreviewAction extends AbstractAction {
-    private static final long serialVersionUID = 4093248389910254252L;
+		final FileFixedWidthDataFactory dataFactory = new FileFixedWidthDataFactory();
+		final FileFixedWidthConfiguration config = mainPanel.getConfiguration();
+		dataFactory.setQueryName(mainPanel.getQueryName());
+		dataFactory.setConfig(config);
+		return dataFactory;
+	}
 
-    private PreviewAction() {
-      putValue( Action.NAME, "Preview" );
-    }
+	private class PreviewAction extends AbstractAction {
+		private static final long serialVersionUID = 4093248389910254252L;
 
-    public void actionPerformed( final ActionEvent aEvt ) {
-      try {
-        final FileFixedWidthDataFactory dataFactory = produceDataFactory();
-        DataFactoryEditorSupport.configureDataFactoryForPreview( dataFactory, context );
+		private PreviewAction() {
+			putValue(Action.NAME, "Preview");
+		}
 
-        final DataPreviewDialog previewDialog = new DataPreviewDialog( FileFixedWidthDataSourceEditor.this );
+		public void actionPerformed(final ActionEvent aEvt) {
+			try {
+				final FileFixedWidthDataFactory dataFactory = produceDataFactory();
+				DataFactoryEditorSupport.configureDataFactoryForPreview(dataFactory, context);
 
-        final FileFixedWidthPreviewWorker worker = new FileFixedWidthPreviewWorker( dataFactory, mainPanel.getQueryName() );
-        previewDialog.showData( worker );
+				final DataPreviewDialog previewDialog = new DataPreviewDialog(FileFixedWidthDataSourceEditor.this);
 
-        final ReportDataFactoryException factoryException = worker.getException();
-        if ( factoryException != null ) {
-          ExceptionDialog.showExceptionDialog( FileFixedWidthDataSourceEditor.this, "Error",
-            "An Error Occured during preview", factoryException );
-        }
-      } catch ( Exception e ) {
-        ExceptionDialog.showExceptionDialog( FileFixedWidthDataSourceEditor.this, "Error",
-          "An Error Occured during preview", e );
-      }
-    }
-  }
+				final FileFixedWidthPreviewWorker worker = new FileFixedWidthPreviewWorker(dataFactory,
+						mainPanel.getQueryName());
+				previewDialog.showData(worker);
 
+				final ReportDataFactoryException factoryException = worker.getException();
+				if (factoryException != null) {
+					ExceptionDialog.showExceptionDialog(FileFixedWidthDataSourceEditor.this, "Error",
+							"An Error Occured during preview", factoryException);
+				}
+			} catch (Exception e) {
+				ExceptionDialog.showExceptionDialog(FileFixedWidthDataSourceEditor.this, "Error",
+						"An Error Occured during preview", e);
+			}
+		}
+	}
 
-  private static class FileFixedWidthPreviewWorker implements PreviewWorker {
-    private FileFixedWidthDataFactory dataFactory;
-    private TableModel resultTableModel;
-    private ReportDataFactoryException exception;
-    private String query;
+	private static class FileFixedWidthPreviewWorker implements PreviewWorker {
+		private FileFixedWidthDataFactory dataFactory;
+		private TableModel resultTableModel;
+		private ReportDataFactoryException exception;
+		private String query;
 
-    private FileFixedWidthPreviewWorker( final FileFixedWidthDataFactory dataFactory, final String query ) {
-      if ( dataFactory == null ) {
-        throw new NullPointerException();
-      }
-      this.query = query;
-      this.dataFactory = dataFactory;
-    }
+		private FileFixedWidthPreviewWorker(final FileFixedWidthDataFactory dataFactory, final String query) {
+			if (dataFactory == null) {
+				throw new NullPointerException();
+			}
+			this.query = query;
+			this.dataFactory = dataFactory;
+		}
 
-    public ReportDataFactoryException getException() {
-      return exception;
-    }
+		public ReportDataFactoryException getException() {
+			return exception;
+		}
 
-    public TableModel getResultTableModel() {
-      return resultTableModel;
-    }
+		public TableModel getResultTableModel() {
+			return resultTableModel;
+		}
 
-    public void close() {
-    }
+		public void close() {
+		}
 
-    /**
-     * Requests that the thread stop processing as soon as possible.
-     */
-    public void cancelProcessing( final CancelEvent event ) {
-      dataFactory.cancelRunningQuery();
-    }
+		/**
+		 * Requests that the thread stop processing as soon as possible.
+		 */
+		public void cancelProcessing(final CancelEvent event) {
+			dataFactory.cancelRunningQuery();
+		}
 
-    /**
-     * When an object implementing interface <code>Runnable</code> is used to create a thread, starting the thread
-     * causes the object's <code>run</code> method to be called in that separately executing thread.
-     * <p/>
-     * The general contract of the method <code>run</code> is that it may take any action whatsoever.
-     *
-     * @see Thread#run()
-     */
-    public void run() {
-      try {
-        resultTableModel = dataFactory.queryData( query, new ReportParameterValues() );
-        dataFactory.close();
-      } catch ( ReportDataFactoryException e ) {
-        exception = e;
-      }
-    }
-  }
+		/**
+		 * When an object implementing interface <code>Runnable</code> is used to create
+		 * a thread, starting the thread causes the object's <code>run</code> method to
+		 * be called in that separately executing thread.
+		 * <p/>
+		 * The general contract of the method <code>run</code> is that it may take any
+		 * action whatsoever.
+		 *
+		 * @see Thread#run()
+		 */
+		public void run() {
+			try {
+				resultTableModel = dataFactory.queryData(query, new ReportParameterValues());
+				dataFactory.close();
+			} catch (ReportDataFactoryException e) {
+				exception = e;
+			}
+		}
+	}
 }

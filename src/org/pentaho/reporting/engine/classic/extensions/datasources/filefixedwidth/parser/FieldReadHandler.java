@@ -24,7 +24,7 @@ import org.xml.sax.SAXException;
 /**
  * Class to read Records
  *
- * @author Pieter van der Merwe
+ * @author Pieter van der Merwe and Ben Letchford
  */
 public class FieldReadHandler extends AbstractXmlReadHandler {
   
