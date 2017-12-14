@@ -1,14 +1,14 @@
 # Datasource File Fixed Width
 
-Pentaho Report Designer plugin that allows you to extract data from a fixed-width file.
+Pentaho Reporting plugin that allows you to extract data from a fixed-width file.
 
 # Installation
 
-Copy the compiled `jar` to the `lib` directory under your Pentaho Report Designer instance.
+Copy the compiled `jar` to the `lib` directory under your Pentaho Reporting instance.
 
 # Usage
 
-Given the following fixed-width file, let's see what this would look like if we imported this into Pentaho Report Designer via this plugin.
+Given the following fixed-width file, let's see what this would look like if we imported this into Pentaho Reporting via this plugin.
 
 ```
 020171011 Ben     L Toyot
