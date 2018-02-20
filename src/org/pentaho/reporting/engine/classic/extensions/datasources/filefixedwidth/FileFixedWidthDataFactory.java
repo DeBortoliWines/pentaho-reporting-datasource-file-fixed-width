@@ -113,13 +113,15 @@ public class FileFixedWidthDataFactory extends AbstractDataFactory {
       }
     };
 
+    String fileLocationWithParameters = parameterParser.translateAndLookup(this.config.getFileLocation(), parameters);
+
     // Get the data
     // All rows are effectively 'inner join'ed into one row where every next record is added to the back.
     // If a record repeats then a new line is created with all the earlier / parent data repeated.
     Object[] rowData = null;
     try {
       int prevRecordIndex = -1;
-      try (BufferedReader br = new BufferedReader(new FileReader(this.config.getFileLocation()))){
+      try (BufferedReader br = new BufferedReader(new FileReader(fileLocationWithParameters))){
         while (true){
           String newline = br.readLine();
 
