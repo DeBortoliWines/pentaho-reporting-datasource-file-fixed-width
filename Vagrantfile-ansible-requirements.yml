@@ -1,0 +1,2 @@
+- src: https://github.com/benletchford/ansible-clone-env-vars
+- src: https://github.com/benletchford/ansible-set-proxy-from-env

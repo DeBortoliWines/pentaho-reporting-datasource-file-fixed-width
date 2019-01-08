@@ -3,3 +3,6 @@ lib
 dist
 test-lib
 .settings
+.vagrant
+*.log
+*.ansible-galaxy-roles
