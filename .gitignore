@@ -6,3 +6,4 @@ test-lib
 .vagrant
 *.log
 *.ansible-galaxy-roles
+*.retry
